@@ -1,5 +1,4 @@
-colorama==0.4.6
-sumolib==1.21.0
-tqdm==4.67.1
-traci==1.21.0
+numpy
 opencv-python
+Pillow
+traci
