@@ -4,7 +4,7 @@ from tkinter import ttk, messagebox, filedialog
 import traci
 import math
 import random
-import cv2  # For recording the simulation in MP4
+import cv2 
 
 class ImprovedCS:
     def __init__(self, config):
@@ -65,7 +65,7 @@ class ImprovedCS:
                     continue
                 concentration = self._gaussian_plume(x, y, rx, ry, emission_rate)
                 self.pollution_grid[i][j] += concentration
-                self.nox_grid[i][j] += concentration * 0.7  # Assuming 70% of pollution is NOx
+                self.nox_grid[i][j] += concentration * 0.7
 
     def _gaussian_plume(self, sx, sy, rx, ry, emission_rate):
         wind_u, wind_v = self._get_wind_at_point(rx, ry)
@@ -192,7 +192,7 @@ class ImprovedContaminationConfigPlugin:
             'update_interval': 10,
             'recording': False
         }
-        self.simulation = None  # Initialize the simulation attribute
+        self.simulation = None
         self.create_widgets()
 
     def create_widgets(self):
@@ -209,7 +209,7 @@ class ImprovedContaminationConfigPlugin:
 
         self.create_general_widgets()
         self.create_simulation_widgets()
-        self.create_visualization_widgets()  # Ensure this method is defined
+        self.create_visualization_widgets()
 
         ttk.Button(self.master, text="Start Simulation", command=self.start_simulation).pack(pady=10)
 
@@ -217,14 +217,13 @@ class ImprovedContaminationConfigPlugin:
         ttk.Label(self.visualization_frame, text="Select Visualization Layer:").grid(row=0, column=0, padx=5, pady=5)
         self.layer_combobox = ttk.Combobox(self.visualization_frame, values=['pollution', 'wind_speed', 'wind_direction', 'nox'])
         self.layer_combobox.grid(row=0, column=1, padx=5, pady=5)
-        self.layer_combobox.current(0)  # Set default value
+        self.layer_combobox.current(0)
 
     def create_general_widgets(self):
         ttk.Label(self.general_frame, text="SUMO Config File:").grid(row=0, column=0, sticky='w', padx=5, pady=5)
         self.sumo_config_entry = ttk.Entry(self.general_frame, textvariable=tk.StringVar(value=self.config['sumo_config']))
         self.sumo_config_entry.grid(row=0, column=1, sticky='ew', padx=5, pady=5)
 
-        # Browse button to select the SUMO config file
         ttk.Button(self.general_frame, text="Browse", command=self.browse_sumo_config).grid(row=0, column=2, padx=5, pady=5)
 
         ttk.Label(self.general_frame, text="Grid Resolution:").grid(row=1, column=0, sticky='w', padx=5, pady=5)
@@ -271,14 +270,13 @@ class ImprovedContaminationConfigPlugin:
         self.config['total_steps'] = int(self.total_steps_slider.get())
         self.config['update_interval'] = int(self.update_interval_slider.get())
         
-        # Create an instance of ImprovedCS with the current config
+        
         self.simulation = ImprovedCS(self.config)  
         
-        # Example output video name
+        
         output_video = "output_video.mp4"  
         self.simulation.start_recording(output_video)  
         
-        # Start the SUMO simulation in a separate thread
         threading.Thread(target=self.run_simulation).start()
 
     def run_simulation(self):
@@ -289,10 +287,10 @@ class ImprovedContaminationConfigPlugin:
                 self.simulation.update()
                 
                 if step % self.config['update_interval'] == 0:
-                    self.simulation.current_layer = 'pollution'  # Example layer
+                    self.simulation.current_layer = 'pollution' 
                     self.simulation.visualize()
                     
-                    # Capture frame for video recording
+                    
                     if self.config['recording']:
                         frame = self.capture_frame()
                         self.simulation.record_frame(frame)
@@ -306,8 +304,6 @@ class ImprovedContaminationConfigPlugin:
             messagebox.showerror("Simulation Error", f"An error occurred during the simulation: {str(e)}")
 
     def capture_frame(self):
-        # Implement frame capture logic here
-        # This is a placeholder for actual frame capture code
         return None
 
     def browse_sumo_config(self):

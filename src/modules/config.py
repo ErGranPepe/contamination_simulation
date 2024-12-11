@@ -7,8 +7,8 @@ class ContaminationConfigPlugin:
         master.title("Configuración de Simulación de Contaminación")
         self.apply_callback = apply_callback
 
-        # Parámetros de configuración
-        self.sumo_config = StringVar(value="")  # Corregido aquí
+        
+        self.sumo_config = StringVar(value="") 
         self.wind_speed = DoubleVar(value=2.0)
         self.wind_direction = DoubleVar(value=0.0)
         self.grid_resolution = IntVar(value=100)
@@ -18,14 +18,11 @@ class ContaminationConfigPlugin:
         self.record_simulation = BooleanVar(value=False)
         self.output_file = StringVar(value="simulation_output.mp4")
         self.total_steps = IntVar(value=1000)
+        self.temperature = DoubleVar(value=20.0)  
+        self.humidity = DoubleVar(value=50.0)      
+        self.chimney_height = DoubleVar(value=10.0)  
+        self.deposition_rate = DoubleVar(value=0.1)  
 
-        # Nuevos parámetros
-        self.temperature = DoubleVar(value=20.0)  # Temperatura en grados Celsius
-        self.humidity = DoubleVar(value=50.0)      # Humedad en porcentaje
-        self.chimney_height = DoubleVar(value=10.0)  # Altura de chimeneas en metros
-        self.deposition_rate = DoubleVar(value=0.1)  # Tasa de deposición de contaminantes
-
-        # Crear widgets
         self.create_widgets()
 
     def create_widgets(self):
@@ -41,7 +38,7 @@ class ContaminationConfigPlugin:
             if min_val is not None and max_val is not None:
                 ttk.Label(self.master, text=f"({min_val} - {max_val})").grid(row=row, column=3, padx=2)
 
-        # Selección de archivo de configuración de SUMO
+
         ttk.Label(self.master, text="Configuración de SUMO:").grid(row=0, column=0, sticky="w", padx=5, pady=2)
         self.sumo_entry = ttk.Entry(self.master, textvariable=self.sumo_config, state='readonly')
         self.sumo_entry.grid(row=0, column=1, padx=5, pady=2)
@@ -67,7 +64,6 @@ class ContaminationConfigPlugin:
         create_labeled_entry(7, "Número total de pasos:", self.total_steps,
                              "Número total de pasos de la simulación", 100, 100000)
 
-        # Nuevos parámetros
         create_labeled_entry(8, "Temperatura (°C):", self.temperature,
                              "Temperatura en grados Celsius", -30, 50)
         create_labeled_entry(9, "Humedad (%):", self.humidity,
@@ -91,7 +87,7 @@ class ContaminationConfigPlugin:
                                                                                            columnspan=2,
                                                                                            pady=10)
 
-        # Calcular dimensiones de las celdas
+        # Calcular dimensiones celdas
         self.cell_length_label = ttk.Label(self.master, text="Longitud de cada celda (m):")
         self.cell_length_label.grid(row=15, column=0, sticky="w", padx=5, pady=2)
         self.cell_length_value = ttk.Label(self.master, text="0.0")
@@ -137,18 +133,18 @@ class ContaminationConfigPlugin:
             messagebox.showerror("Error", f"Error al aplicar la configuración: {str(e)}")
 
     def estimate_simulation_time(self, config):
-        time_per_step = 0.1  # segundos por paso
+        time_per_step = 0.1  
         time_per_update = 0.5  # segundos por actualización visual
         total_time = (config['total_steps'] * time_per_step) + \
                      (config['total_steps'] / config['update_interval'] * time_per_update)
-        return total_time / 60  # convertir a minutos
+        return total_time / 60  
 
     def update_cell_length(self, *args):
         """Actualiza la longitud de cada celda en función de la resolución de la cuadrícula."""
         grid_resolution = self.grid_resolution.get()
         if grid_resolution > 0:
             # Suponiendo que el tamaño del mapa de SUMO es de 1000 metros por 1000 metros
-            map_size = 1000  # tamaño del mapa en metros
+            map_size = 1000 
             cell_length = map_size / grid_resolution
             self.cell_length_value.config(text=f"{cell_length:.2f}")
         else:

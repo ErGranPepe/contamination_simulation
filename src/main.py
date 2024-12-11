@@ -10,7 +10,7 @@ import traci
 import threading
 
 def run_simulation(config):
-    """Ejecuta la simulación basada en la configuración proporcionada."""
+    
     print("Starting SUMO...")
     traci.start([r"C:\Program Files (x86)\Eclipse\Sumo\bin\sumo-gui.exe", "-c", config['sumo_config']])
     print("SUMO started, connecting to TraCI...")
@@ -29,7 +29,7 @@ def run_simulation(config):
             simulation.visualize()
 
             if recorder:
-                time.sleep(1)  # Esperar un segundo para asegurar que todo esté coloreado antes de capturar
+                time.sleep(1)  # esperar un segundo para asegurar que todo esté coloreado antes de capturar
                 recorder.capture_frame()
 
         step += 1
@@ -42,7 +42,6 @@ def run_simulation(config):
 
     traci.close()
 
-# Código principal que incluye la clase ContaminationConfigPlugin y sus métodos.
 def apply_config(config):
     """Inicia un hilo para ejecutar la simulación con la configuración dada."""
     threading.Thread(target=run_simulation, args=(config,)).start()

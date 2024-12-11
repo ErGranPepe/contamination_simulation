@@ -22,7 +22,6 @@ class SimulationRecorder:
                 print(f"Failed to read image from {self.temp_frame_path}")
                 return
 
-            # Agregar el frame a la lista
             self.frames.append(frame)
 
         except Exception as e:

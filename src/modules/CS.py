@@ -36,8 +36,7 @@ class CS:
         return max(2, 0.5 + 0.15 * vehicle_speed)
 
     def update(self):
-        # Decaimiento del contaminante en la cuadrícula
-        self.pollution_grid *= 0.99
+        self.pollution_grid *= 0.99 # decaimiento de la contaminacion
 
         vehicles = traci.vehicle.getIDList()
 
@@ -47,7 +46,7 @@ class CS:
             emission_rate = self.calculate_emission_rate(vehicle_speed)
             plume_height = self.calculate_plume_rise(vehicle_speed)
 
-            # Definir límites para el cálculo de contaminación para optimizar el rendimiento
+            # límites para el cálculo de contaminación para optimizar el rendimiento
             i_min = max(0, int((y - self.y_min - 100) / (self.y_max - self.y_min) * self.config['grid_resolution']))
             i_max = min(self.config['grid_resolution'],
                         int((y - self.y_min + 100) / (self.y_max - self.y_min) * self.config['grid_resolution']))
@@ -78,7 +77,6 @@ class CS:
                                     (math.exp(-0.5 * ((plume_height) / sigma_z) ** 2) + \
                                      math.exp(-0.5 * ((plume_height) / sigma_z) ** 2))
 
-                    # Acumular la concentración en la cuadrícula
                     self.pollution_grid[i, j] += concentration
 
     def calculate_emission_rate(self, vehicle_speed):
