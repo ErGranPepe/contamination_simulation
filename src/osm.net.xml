@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<net>
+    <location netOffset="0,0" convBoundary="-100,-100,100,100"/>
+    <edge id="1" from="1" to="2" priority="1" numLanes="1" speed="13.89">
+        <lane index="0" length="100" speed="13.89" />
+    </edge>
+    <edge id="2" from="2" to="3" priority="1" numLanes="1" speed="13.89">
+        <lane index="0" length="100" speed="13.89" />
+    </edge>
+    <edge id="3" from="3" to="1" priority="1" numLanes="1" speed="13.89">
+        <lane index="0" length="100" speed="13.89" />
+    </edge>
+    <node id="1" x="0" y="-50"/>
+    <node id="2" x="-50" y="0"/>
+    <node id="3" x="50" y="0"/>
+</net>
