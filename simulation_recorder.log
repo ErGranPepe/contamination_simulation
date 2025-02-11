@@ -1,0 +1,60 @@
+2025-02-11 12:59:13,113 - INFO - Video saved to C:/Users/mario/Desktop/TFG_PROYECTO/CONFIG_sumo_mostoles.sumocfg_20250211_125617.mp4
+2025-02-11 13:01:39,575 - INFO - Starting main
+2025-02-11 13:01:39,629 - INFO - Starting contamination config plugin
+2025-02-11 13:01:39,735 - INFO - Running main loop
+2025-02-11 13:01:54,406 - INFO - Applying config
+2025-02-11 13:01:54,929 - INFO - Starting SUMO...
+2025-02-11 13:01:54,929 - INFO - Config applied
+2025-02-11 13:01:59,302 - INFO - SUMO started, connecting to TraCI...
+2025-02-11 13:01:59,302 - INFO - Connected to TraCI
+2025-02-11 13:01:59,302 - INFO - Recording simulation...
+2025-02-11 13:01:59,303 - INFO - Recorder initialized
+2025-02-11 13:01:59,303 - INFO - Simulation started
+2025-02-11 13:04:46,076 - INFO - Simulation finished
+2025-02-11 13:04:49,090 - INFO - Video saved to C:/Users/mario/Desktop/TFG_PROYECTO/CONFIG_sumo_mostoles.sumocfg_20250211_130159.mp4
+2025-02-11 13:06:59,814 - INFO - Simulation finished
+2025-02-11 13:07:02,256 - INFO - Main loop finished
+2025-02-11 13:09:36,863 - INFO - Starting main
+2025-02-11 13:09:36,917 - INFO - Starting contamination config plugin
+2025-02-11 13:09:37,035 - INFO - Running main loop
+2025-02-11 13:09:48,478 - INFO - Applying config
+2025-02-11 13:09:49,448 - INFO - Starting SUMO...
+2025-02-11 13:09:49,448 - INFO - Config applied
+2025-02-11 13:09:53,325 - INFO - SUMO started, connecting to TraCI...
+2025-02-11 13:09:53,325 - INFO - Connected to TraCI
+2025-02-11 13:09:53,325 - INFO - Recording simulation...
+2025-02-11 13:09:53,348 - INFO - SimulationRecorder initialized
+2025-02-11 13:09:53,348 - INFO - Recorder initialized
+2025-02-11 13:09:53,348 - INFO - Simulation started
+2025-02-11 13:10:28,728 - INFO - Main loop finished
+2025-02-11 13:10:30,794 - INFO - Starting main
+2025-02-11 13:10:30,842 - INFO - Starting contamination config plugin
+2025-02-11 13:10:30,946 - INFO - Running main loop
+2025-02-11 13:10:46,443 - INFO - Applying config
+2025-02-11 13:10:50,027 - INFO - Starting SUMO...
+2025-02-11 13:10:50,027 - INFO - Config applied
+2025-02-11 13:10:53,960 - INFO - SUMO started, connecting to TraCI...
+2025-02-11 13:10:53,960 - INFO - Connected to TraCI
+2025-02-11 13:10:53,960 - INFO - Recording simulation...
+2025-02-11 13:10:53,966 - INFO - SimulationRecorder initialized
+2025-02-11 13:10:53,966 - INFO - Recorder initialized
+2025-02-11 13:10:53,966 - INFO - Simulation started
+2025-02-11 13:11:08,793 - INFO - Simulation finished
+2025-02-11 13:11:08,988 - INFO - Video saved to C:/Users/mario/Desktop/TFG_PROYECTO/CONFIG_sumo_mostoles.sumocfg_20250211_131053.mp4
+2025-02-11 13:14:11,165 - INFO - Simulation finished
+2025-02-11 13:14:20,372 - INFO - Starting main
+2025-02-11 13:14:20,425 - INFO - Starting contamination config plugin
+2025-02-11 13:14:20,529 - INFO - Running main loop
+2025-02-11 13:14:31,564 - INFO - Applying config
+2025-02-11 13:14:31,984 - INFO - Starting SUMO...
+2025-02-11 13:14:31,984 - INFO - Config applied
+2025-02-11 13:14:41,216 - INFO - SUMO started, connecting to TraCI...
+2025-02-11 13:14:41,216 - INFO - Connected to TraCI
+2025-02-11 13:14:41,216 - INFO - Recording simulation...
+2025-02-11 13:14:41,223 - INFO - SimulationRecorder initialized
+2025-02-11 13:14:41,223 - INFO - Recorder initialized
+2025-02-11 13:14:41,223 - INFO - Simulation started
+2025-02-11 13:14:55,329 - INFO - Simulation finished
+2025-02-11 13:14:55,564 - INFO - Video saved to C:/Users/mario/Desktop/TFG_PROYECTO/CONFIG_sumo_mostoles.sumocfg_20250211_131441.mp4
+2025-02-11 13:15:33,892 - INFO - Main loop finished
+2025-02-11 13:15:36,135 - INFO - Simulation finished
