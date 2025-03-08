@@ -12,7 +12,7 @@ import logging
 import matplotlib.pyplot as plt
 import numpy as np
 
-# Configurar el logger
+
 logging.basicConfig(filename='simulation.log', level=logging.DEBUG,
                     format='%(asctime)s - %(levelname)s - %(message)s')
 
