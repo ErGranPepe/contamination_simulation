@@ -73,3 +73,12 @@
 2025-02-26 10:00:26,569 - INFO - Simulation finished
 2025-02-26 10:00:26,789 - INFO - Video saved to C:/Users/mario/Desktop/TFG_PROYECTO/CONFIG_sumo_mostoles.sumocfg_20250226_100025.mp4
 2025-02-26 10:00:32,921 - INFO - Simulation finished
+2025-03-15 23:07:08,755 - INFO - Starting main
+2025-03-15 23:07:08,808 - INFO - Starting contamination config plugin
+2025-03-15 23:07:08,920 - INFO - Running main loop
+2025-03-15 23:07:14,482 - INFO - Applying config
+2025-03-15 23:07:15,007 - INFO - Starting SUMO...
+2025-03-15 23:07:15,007 - INFO - Config applied
+2025-03-15 23:07:17,043 - INFO - SUMO started, connecting to TraCI...
+2025-03-15 23:07:17,043 - INFO - Connected to TraCI
+2025-03-15 23:07:17,043 - INFO - Simulation started

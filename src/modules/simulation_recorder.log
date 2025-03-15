@@ -1,0 +1,46 @@
+2025-03-15 22:29:05,156 - INFO - Starting main
+2025-03-15 22:29:05,211 - INFO - Starting contamination config plugin
+2025-03-15 22:29:05,320 - INFO - Running main loop
+2025-03-15 22:29:10,109 - INFO - Applying config
+2025-03-15 22:29:10,480 - INFO - Starting SUMO...
+2025-03-15 22:29:10,480 - INFO - Config applied
+2025-03-15 22:29:12,632 - INFO - SUMO started, connecting to TraCI...
+2025-03-15 22:29:12,633 - INFO - Connected to TraCI
+2025-03-15 22:29:12,633 - INFO - Simulation started
+2025-03-15 22:30:38,928 - INFO - Starting main
+2025-03-15 22:30:38,980 - INFO - Starting contamination config plugin
+2025-03-15 22:30:39,105 - INFO - Running main loop
+2025-03-15 22:30:44,000 - INFO - Applying config
+2025-03-15 22:30:44,471 - INFO - Starting SUMO...
+2025-03-15 22:30:44,471 - INFO - Config applied
+2025-03-15 22:30:46,760 - INFO - SUMO started, connecting to TraCI...
+2025-03-15 22:30:46,760 - INFO - Connected to TraCI
+2025-03-15 22:30:46,761 - INFO - Simulation started
+2025-03-15 22:31:47,950 - INFO - Starting main
+2025-03-15 22:31:47,999 - INFO - Starting contamination config plugin
+2025-03-15 22:31:48,099 - INFO - Running main loop
+2025-03-15 22:31:53,345 - INFO - Applying config
+2025-03-15 22:31:53,797 - INFO - Starting SUMO...
+2025-03-15 22:31:53,797 - INFO - Config applied
+2025-03-15 22:31:55,975 - INFO - SUMO started, connecting to TraCI...
+2025-03-15 22:31:55,975 - INFO - Connected to TraCI
+2025-03-15 22:31:55,975 - INFO - Simulation started
+2025-03-15 22:32:28,683 - INFO - Starting main
+2025-03-15 22:32:28,726 - INFO - Starting contamination config plugin
+2025-03-15 22:32:28,754 - INFO - Running main loop
+2025-03-15 22:32:33,551 - INFO - Applying config
+2025-03-15 22:32:34,289 - INFO - Starting SUMO...
+2025-03-15 22:32:34,289 - INFO - Config applied
+2025-03-15 22:32:36,397 - INFO - SUMO started, connecting to TraCI...
+2025-03-15 22:32:36,397 - INFO - Connected to TraCI
+2025-03-15 22:32:36,397 - INFO - Simulation started
+2025-03-15 22:33:35,266 - INFO - Starting main
+2025-03-15 22:33:35,314 - INFO - Starting contamination config plugin
+2025-03-15 22:33:35,344 - INFO - Running main loop
+2025-03-15 22:33:39,968 - INFO - Applying config
+2025-03-15 22:33:40,679 - INFO - Starting SUMO...
+2025-03-15 22:33:40,679 - INFO - Config applied
+2025-03-15 22:33:42,595 - INFO - SUMO started, connecting to TraCI...
+2025-03-15 22:33:42,596 - INFO - Connected to TraCI
+2025-03-15 22:33:42,596 - INFO - Simulation started
+2025-03-15 22:33:49,192 - INFO - Main loop finished

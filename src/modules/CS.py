@@ -1,10 +1,18 @@
 import colorsys
 import math
-
 import numpy as np
 import traci
+import sys
+import os
 
-# CS :  Contamination SImulation
+# Asegúrate de que el directorio actual es el de 'modules'
+module_path = os.path.join(os.path.dirname(__file__))
+if module_path not in sys.path:
+    sys.path.append(module_path)
+
+import spam  # Ahora se encontrará en el path
+
+
 class CS:
     def __init__(self, config):
         self.config = config
@@ -35,8 +43,14 @@ class CS:
     def calculate_plume_rise(self, vehicle_speed):
         return max(2, 0.5 + 0.15 * vehicle_speed)
 
+    def calculate_emission_rate(self, vehicle_speed):
+        base_emission = 0.1
+        speed_factor = (1 + 0.05 * (vehicle_speed - 20)) if vehicle_speed > 20 else 1
+        return base_emission * speed_factor * self.emission_factor
+
     def update(self):
-        self.pollution_grid *= 0.99 # decaimiento de la contaminacion
+        # Decaimiento de la contaminación global
+        self.pollution_grid *= 0.99
 
         vehicles = traci.vehicle.getIDList()
 
@@ -46,7 +60,7 @@ class CS:
             emission_rate = self.calculate_emission_rate(vehicle_speed)
             plume_height = self.calculate_plume_rise(vehicle_speed)
 
-            # límites para el cálculo de contaminación para optimizar el rendimiento
+            # Cálculo de índices (ventana de cálculo para optimización)
             i_min = max(0, int((y - self.y_min - 100) / (self.y_max - self.y_min) * self.config['grid_resolution']))
             i_max = min(self.config['grid_resolution'],
                         int((y - self.y_min + 100) / (self.y_max - self.y_min) * self.config['grid_resolution']))
@@ -54,35 +68,36 @@ class CS:
             j_max = min(self.config['grid_resolution'],
                         int((x - self.x_min + 100) / (self.x_max - self.x_min) * self.config['grid_resolution']))
 
-            for i in range(i_min, i_max):
-                for j in range(j_min, j_max):
-                    receptor_x = self.x_min + (j + 0.5) * (self.x_max - self.x_min) / self.config['grid_resolution']
-                    receptor_y = self.y_min + (i + 0.5) * (self.y_max - self.y_min) / self.config['grid_resolution']
+            # Debugging: Print types and values of arguments
+            print(f"Type of pollution_grid: {type(self.pollution_grid)}, Value: {self.pollution_grid}")
+            print(f"Type of i_min: {type(i_min)}, Value: {i_min}")
+            print(f"Type of i_max: {type(i_max)}, Value: {i_max}")
+            print(f"Type of j_min: {type(j_min)}, Value: {j_min}")
+            print(f"Type of j_max: {type(j_max)}, Value: {j_max}")
+            print(f"Type of x: {type(x)}, Value: {x}")
+            print(f"Type of y: {type(y)}, Value: {y}")
+            print(f"Type of emission_rate: {type(emission_rate)}, Value: {emission_rate}")
+            print(f"Type of plume_height: {type(plume_height)}, Value: {plume_height}")
+            print(f"Type of wind_speed: {type(self.wind_speed)}, Value: {self.wind_speed}")
+            print(f"Type of wind_direction: {type(self.wind_direction)}, Value: {self.wind_direction}")
+            print(f"Type of x_min: {type(self.x_min)}, Value: {self.x_min}")
+            print(f"Type of x_max: {type(self.x_max)}, Value: {self.x_max}")
+            print(f"Type of y_min: {type(self.y_min)}, Value: {self.y_min}")
+            print(f"Type of y_max: {type(self.y_max)}, Value: {self.y_max}")
+            print(f"Type of grid_resolution: {type(self.config['grid_resolution'])}, Value: {self.config['grid_resolution']}")
 
-                    distance = math.sqrt((receptor_x - x) ** 2 + (receptor_y - y) ** 2)
+            spam.update_pollution(
+                self.pollution_grid,
+                i_min, i_max, j_min, j_max,
+                x, y,
+                emission_rate,
+                plume_height,
+                self.wind_speed,
+                self.wind_direction,
+                self.x_min, self.x_max, self.y_min, self.y_max,
+                self.config['grid_resolution']
+            )
 
-                    if distance < 1:
-                        continue
-
-                    wind_direction_to_receptor = math.atan2(receptor_y - y, receptor_x - x)
-                    angle_diff = abs(wind_direction_to_receptor - self.wind_direction)
-
-                    if angle_diff > math.pi:
-                        angle_diff = 2 * math.pi - angle_diff
-
-                    sigma_y, sigma_z = self.calculate_dispersion_coefficients(distance)
-
-                    concentration = (emission_rate / (2 * math.pi * self.wind_speed * sigma_y * sigma_z)) * \
-                                    math.exp(-0.5 * (angle_diff / sigma_y) ** 2) * \
-                                    (math.exp(-0.5 * ((plume_height) / sigma_z) ** 2) + \
-                                     math.exp(-0.5 * ((plume_height) / sigma_z) ** 2))
-
-                    self.pollution_grid[i, j] += concentration
-
-    def calculate_emission_rate(self, vehicle_speed):
-        base_emission = 0.1
-        speed_factor = (1 + 0.05 * (vehicle_speed - 20)) if vehicle_speed > 20 else 1
-        return base_emission * speed_factor * self.emission_factor
 
     def visualize(self):
         max_pollution = np.max(self.pollution_grid)
@@ -104,7 +119,10 @@ class CS:
                     color = (int(r * 255), int(g * 255), int(b * 255), int(255 * min(1, pollution / max_pollution * 5)))
 
                     polygon_id = f"pollution_{i}_{j}"
-                    shape = [(x, y), (x + cell_width * 2, y), (x + cell_width * 2, y + cell_height * 2),
-                             (x, y + cell_height * 2)]
+                    shape = [
+                        (x, y),
+                        (x + cell_width * 2, y),
+                        (x + cell_width * 2, y + cell_height * 2),
+                        (x, y + cell_height * 2)
+                    ]
                     traci.polygon.add(polygon_id, shape, color, True, "pollution_layer")
-
