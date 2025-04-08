@@ -1,146 +1,327 @@
-## Simulación de Contaminación con SUMO
+# Simulación de Contaminación con SUMO
 
-Este proyecto implementa una simulación de la dispersión de contaminantes generados por vehículos en un entorno urbano utilizando SUMO (Simulation of Urban MObility) y Python. La simulación permite analizar el impacto de diferentes parámetros ambientales y vehiculares sobre la calidad del aire, utilizando un modelo de dispersión gaussiana.
+Este proyecto implementa una simulación de alta precisión para la dispersión de contaminantes generados por vehículos en entornos urbanos, utilizando SUMO (Simulation of Urban MObility) y un motor de cálculo híbrido Python/C para máximo rendimiento. La simulación permite analizar el impacto de diferentes parámetros ambientales y vehiculares sobre la calidad del aire, utilizando un modelo gaussiano de dispersión optimizado.
 
-## ****Índice****
+## Índice
 
--   Características
--   Requisitos
--   Instalación
--   Uso
--   Simulación del Viento
--   Ejecución de Pruebas
--   Preguntas Frecuentes (FAQ)
--   Contribuciones
--   Licencia
--   Contacto
-
-**
+- [Características](#características)
+- [Requisitos](#requisitos)
+- [Instalación](#instalación)
+- [Arquitectura del Sistema](#arquitectura-del-sistema)
+- [Uso](#uso)
+- [Modelo de Dispersión](#modelo-de-dispersión)
+- [Optimización de Rendimiento](#optimización-de-rendimiento)
+- [Grabación de Simulaciones](#grabación-de-simulaciones)
+- [Análisis de Datos](#análisis-de-datos)
+- [Solución de Problemas](#solución-de-problemas)
+- [Contribuciones](#contribuciones)
+- [Licencia](#licencia)
+- [Contacto](#contacto)
 
 ## Características
 
-**
-
--   Interfaz Gráfica Amigable: Configura los parámetros de la simulación de manera sencilla.
--   Modelo de Dispersión Gaussiana: Implementa un modelo físico para calcular la dispersión de contaminantes en función de factores como el viento y la estabilidad atmosférica.
--   Grabación de Video: Captura la simulación en tiempo real y guarda el resultado en formato MP4.
--   Estimación del Tiempo de Simulación: Proporciona una estimación del tiempo total que tomará ejecutar la simulación.
-
-**
+- **Interfaz Gráfica Intuitiva**: Configura parámetros de simulación a través de una interfaz gráfica amigable.
+- **Motor de Cálculo Híbrido**: Aprovecha código C optimizado para cálculos intensivos, manteniendo la flexibilidad de Python.
+- **Alto Rendimiento**: Optimizado para simulaciones con muchos vehículos y alta resolución espacial.
+- **Modelo Gaussiano de Dispersión**: Implementa un modelo físico preciso para la dispersión de contaminantes.
+- **Visualización en Tiempo Real**: Muestra la concentración de contaminantes con representación cromática dinámica.
+- **Grabación de Simulaciones**: Captura videos de alta calidad con información superpuesta.
+- **Generación de Mapas de Calor**: Crea visualizaciones para análisis posterior.
+- **Múltiples Parámetros Ambientales**: Simula diferentes condiciones atmosféricas (estabilidad, viento, etc.).
+- **Métricas de Rendimiento**: Muestra estadísticas sobre el rendimiento durante la ejecución.
+- **Sistema Robusto**: Implementa mecanismos de respaldo para garantizar la ejecución incluso bajo condiciones adversas.
 
 ## Requisitos
 
-Antes de comenzar, asegúrate de tener instalado lo siguiente:
+### Software
 
--   Python 3.x
--   SUMO: Debe estar instalado y configurado correctamente en tu sistema.
--   Bibliotecas de Python:
-    
-    -   numpy
-    -   opencv-python
-    -   tkinter (incluido con Python estándar)
-    -   Pillow
-    
+- **Python 3.9+**
+- **SUMO (Simulation of Urban MObility)**: Versión 1.12.0 o superior
+- **Compilador C**: 
+  - Windows: Visual Studio Build Tools con soporte para C/C++
+  - Linux/Mac: GCC 8+ o Clang
+- **Bibliotecas de Python**:
+  - numpy
+  - opencv-python
+  - matplotlib
+  - tqdm
+  - tkinter (incluido con Python estándar)
 
-Puedes instalar las bibliotecas necesarias ejecutando:pip install numpy opencv-python Pillow  
+### Hardware Recomendado
+
+- **Procesador**: CPU multi-núcleo (4+ núcleos) para aprovechar las optimizaciones
+- **RAM**: 8GB mínimo, 16GB recomendado para simulaciones de alta resolución
+- **Gráficos**: Tarjeta gráfica compatible con OpenGL para visualización SUMO
+
 ## Instalación
 
-1.  **Clonar el Repositorio**:
-    
-    bash
-    
-    `git clone https://github.com/tu_usuario/simulation_project.git cd simulation_project` 
-    
-2.  **Configurar SUMO**: Asegúrese de que SUMO esté instalado y que el ejecutable sea accesible desde la línea de comandos.
-3.  **Preparar el Archivo de Configuración SUMO** (`tu_archivo_configuracion.sumocfg`): Este archivo debe apuntar a su red y rutas específicas.
+### 1. Preparación del Entorno
+
+```bash
+# Clonar el repositorio
+git clone https://github.com/usuario/contamination_simulation.git
+cd contamination_simulation
+
+# Crear entorno virtual (opcional pero recomendado)
+python -m venv .venv
+source .venv/bin/activate  # En Windows: .venv\Scripts\activate
+
+# Instalar dependencias
+pip install -r requirements.txt
+```
+
+### 2. Compilación del Módulo C
+
+```bash
+# Navegar al directorio de módulos
+cd src/modules
+
+# Compilar el módulo C optimizado
+python cs_setup.py build_ext --inplace
+
+# Volver al directorio raíz
+cd ../..
+```
+
+### 3. Verificación de la Instalación
+
+```bash
+# Ejecutar la aplicación para verificar que todo funciona
+python src/main.py
+```
+
+Si ves la interfaz gráfica sin errores, la instalación ha sido exitosa.
+
+## Arquitectura del Sistema
+
+El proyecto está estructurado en módulos bien definidos para facilitar el mantenimiento y la extensibilidad:
+
+### Componentes Principales
+
+- **Interfaz de Usuario** (`modules/config.py`): 
+  - Proporciona controles intuitivos para todos los parámetros de simulación
+  - Implementa validación de datos y feedback visual
+
+- **Núcleo de Simulación** (`modules/CS_optimized.py`): 
+  - Gestiona la lógica principal de simulación de contaminación
+  - Coordina la comunicación entre Python y el módulo C
+  - Implementa sistemas de respaldo y manejo de errores
+
+- **Motor de Cálculo C** (`modules/cs_module.c`): 
+  - Implementa los cálculos intensivos del modelo gaussiano de dispersión
+  - Optimizado para rendimiento máximo
+  - Proporciona dos interfaces: para vehículos individuales y procesamiento por lotes
+
+- **Grabador de Simulación** (`modules/recorder_fixed.py`): 
+  - Captura frames de la simulación
+  - Superpone información relevante
+  - Genera videos y mapas de calor
+
+- **Controlador Principal** (`main.py`): 
+  - Coordina todos los componentes
+  - Gestiona el ciclo de vida de la simulación
+  - Implementa métricas de rendimiento
+
+### Diagrama de Flujo
+
+1. **Configuración**: El usuario configura los parámetros a través de la interfaz gráfica
+2. **Inicialización**: Se inicializa SUMO y los componentes de simulación
+3. **Simulación**: Para cada paso de simulación:
+   - SUMO actualiza las posiciones de los vehículos
+   - El núcleo de simulación calcula la dispersión de contaminantes
+   - Se actualiza la visualización periódicamente
+   - Se capturan frames si la grabación está activada
+4. **Finalización**: Se generan los resultados finales y se cierran todos los componentes
 
 ## Uso
 
-1.  Ejecute el script principal:
-    
-    bash
-    
-    `python capas_plugin_v1.0.py` 
-    
-2.  Ajuste los parámetros en la interfaz gráfica:
-    
-    -   **Velocidad del viento (m/s)**: Define la velocidad del viento que influye en la dispersión.
-    -   **Dirección del viento (grados)**: Establece la dirección del viento en grados (0 a 360).
-    -   **Resolución de la cuadrícula**: Define el número de celdas en cada dimensión para el cálculo de contaminación.
-    -   **Clase de estabilidad atmosférica**: Seleccione entre A (muy inestable) y F (muy estable), lo cual afecta los coeficientes de dispersión.
-    -   **Factor de emisión**: Multiplicador que ajusta las emisiones generadas por los vehículos.
-    -   **Intervalo de actualización (pasos)**: Número de pasos entre actualizaciones visuales.
-    -   **Número total de pasos**: Define cuántos pasos se ejecutará la simulación.
-    -   **Grabar simulación**: Opción para grabar la simulación a un archivo MP4.
-    
-3.  Haga clic en "Aplicar y Ejecutar" para iniciar la simulación.
-4.  Si ha seleccionado grabar, se le pedirá que elija un archivo para guardar el video.
+### Ejecución Básica
 
-## Simulación del Viento
+```bash
+python src/main.py
+```
 
-La simulación del viento se basa en un modelo físico que considera varios factores clave:
+### Configuración de Parámetros
 
--   **Velocidad del Viento**: Este parámetro afecta directamente a la dispersión de los contaminantes. Se mide en metros por segundo (m/s).
--   **Dirección del Viento**: Representada en grados, donde 0° indica viento del norte y 90° del este, entre otros.
--   **Estabilidad Atmosférica**: Se clasifica desde A (muy inestable) hasta F (muy estable). Esta clasificación influye en los coeficientes de dispersión utilizados en el modelo gaussiano.
+La interfaz gráfica permite configurar:
 
-El modelo calcula cómo los contaminantes se dispersan a partir de las emisiones generadas por los vehículos, considerando estos factores para predecir las concentraciones en diferentes puntos dentro del área simulada.
+1. **Archivo de configuración SUMO**: Seleccione su archivo .sumocfg
+2. **Parámetros Ambientales**:
+   - **Velocidad del viento**: 0-30 m/s
+   - **Dirección del viento**: 0-360 grados
+   - **Clase de estabilidad atmosférica**: A (muy inestable) a F (muy estable)
+   - **Temperatura**: -30 a 50 °C
+   - **Humedad**: 0-100%
+3. **Parámetros de Simulación**:
+   - **Resolución de cuadrícula**: Determina la precisión espacial (50-500)
+   - **Factor de emisión**: Multiplicador para las emisiones (0.1-2.0)
+   - **Intervalo de actualización**: Pasos entre actualizaciones visuales (1-100)
+   - **Número total de pasos**: Duración de la simulación (100-100000)
+4. **Opciones de Grabación**:
+   - Activar/desactivar grabación
+   - Seleccionar archivo de salida
 
-## Ejecución de Pruebas
+### Visualización
 
-Para garantizar que el código funcione correctamente, se pueden implementar pruebas unitarias utilizando `unittest` o `pytest`. A continuación se presenta un ejemplo básico utilizando `unittest`:
+Durante la simulación, la contaminación se visualiza mediante polígonos coloreados:
+- **Azul**: Baja concentración
+- **Verde/Amarillo**: Concentración media
+- **Rojo**: Alta concentración
 
-1.  Cree un archivo llamado `test_simulation.py`.
-2.  Escriba sus pruebas como se muestra a continuación:
+La transparencia indica la intensidad de la contaminación.
 
-python
+### Resultados
 
-`import unittest from tu_modulo import ContaminationSimulation # Asegúrese de importar su clase correctamente   class  TestContaminationSimulation(unittest.TestCase):   def  test_calculate_emission_rate(self): sim = ContaminationSimulation({'emission_factor':  1.0}) self.assertAlmostEqual(sim.calculate_emission_rate(20),  0.1)   if __name__ ==  '__main__':   unittest.main()` 
+Al finalizar la simulación con grabación activada, se generan:
+- Video MP4 de la simulación completa
+- Mapa de calor final de la contaminación
+- Métricas de rendimiento en el archivo de log
 
-3.  Ejecute las pruebas desde la línea de comandos:
-    
-    bash
-    
-    `python test_simulation.py` 
-    
+## Modelo de Dispersión
 
-Para usar `pytest`, primero instale pytest:
+El proyecto implementa un modelo gaussiano de dispersión atmosférica, que calcula la concentración de contaminantes en cada punto basándose en:
 
-bash
+### Factores Considerados
 
-`pip install pytest` 
+1. **Emisión de Contaminantes**: Varía según la velocidad del vehículo
+2. **Dispersión Atmosférica**: Determinada por la estabilidad atmosférica
+3. **Viento**: Dirección y velocidad afectan el transporte de contaminantes
+4. **Elevación de la Pluma**: Calculada según las características del vehículo
+5. **Decaimiento**: Los contaminantes se disipan con el tiempo
 
-Luego ejecute sus pruebas con:
+### Ecuación Principal
 
-bash
+La concentración de contaminantes en un punto (x,y) se calcula mediante:
 
-`pytest` 
+```
+C(x,y) = (Q / (2π × σy × σz × U)) × exp(-0.5 × (y/σy)²) × [exp(-0.5 × (z-h/σz)²) + exp(-0.5 × (z+h/σz)²)]
+```
 
-## Preguntas Frecuentes (FAQ)
+Donde:
+- C: Concentración
+- Q: Tasa de emisión
+- σy, σz: Coeficientes de dispersión (dependen de la estabilidad atmosférica)
+- U: Velocidad del viento
+- h: Altura de la pluma
+- x,y,z: Coordenadas relativas a la fuente de emisión
 
-## ¿Qué es SUMO?
+### Clases de Estabilidad
 
-SUMO es un simulador de tráfico que permite modelar el comportamiento del tráfico vehicular en entornos urbanos. Es ampliamente utilizado para investigaciones en movilidad y planificación urbana.
+El modelo utiliza las clases de Pasquill-Gifford para la estabilidad atmosférica:
+- **Clase A**: Extremadamente inestable
+- **Clase B**: Moderadamente inestable
+- **Clase C**: Ligeramente inestable
+- **Clase D**: Neutra
+- **Clase E**: Ligeramente estable
+- **Clase F**: Moderadamente estable
 
-## ¿Cómo ajusto los parámetros?
+Cada clase afecta los coeficientes de dispersión (σy, σz) y por tanto el comportamiento de la pluma de contaminación.
 
-Los parámetros pueden ajustarse directamente desde la interfaz gráfica. Cada parámetro incluye una descripción que facilita su comprensión.
+## Optimización de Rendimiento
 
-## ¿Puedo usar mi propia red?
+El sistema utiliza varias estrategias para maximizar el rendimiento:
 
-Sí, es posible utilizar su propia red configurando adecuadamente su archivo `tu_archivo_configuracion.sumocfg`. Asegúrese de que todas las rutas y archivos necesarios estén disponibles.
+### 1. Implementación en C para Cálculos Intensivos
 
-## ¿Cuánto tiempo tardará la simulación?
+- **Cálculos Gaussianos**: Implementados en C para mayor velocidad
+- **Acceso Optimizado a Arrays**: Utiliza strides para acceso eficiente a memoria
+- **Precálculo**: Reutiliza valores calculados para mejorar rendimiento
 
-La estimación del tiempo se calcula automáticamente según los parámetros ingresados. Se mostrará un aviso antes de iniciar la simulación.
+### 2. Procesamiento por Lotes
 
-## ¿Qué hacer si encuentro errores?
+- **Actualización Múltiple**: Procesa todos los vehículos en una sola llamada a C
+- **Decaimiento Global**: Aplica decaimiento a toda la cuadrícula en una operación
+- **Reducción de Sobrecarga**: Minimiza la comunicación Python-C
 
-Si encuentra errores, revise los mensajes en la consola para obtener detalles sobre lo que salió mal. Asegúrese también de que todas las dependencias estén correctamente instaladas.
+### 3. Optimizaciones Matemáticas
+
+- **Ventana de Cálculo**: Solo calcula puntos en un radio relevante
+- **Umbral de Distancia**: Omite cálculos para puntos muy lejanos
+- **Factores Precalculados**: Optimiza cálculos repetitivos
+
+### 4. Robustez
+
+- **Fallback Automático**: Si el módulo C falla, utiliza implementación en Python
+- **Manejo de Errores**: Recuperación de errores sin detener la simulación
+- **Validación de Datos**: Previene errores de segmentación y accesos inválidos
+
+## Grabación de Simulaciones
+
+El sistema permite grabar simulaciones con características avanzadas:
+
+### Características
+
+- **Captura Automática**: Guarda frames en intervalos configurables
+- **Información Superpuesta**: Muestra parámetros, tiempo y estadísticas
+- **Formato MP4**: Genera videos compatibles con la mayoría de reproductores
+- **Gestión de Recursos**: Limpia automáticamente archivos temporales
+- **Manejo de Errores**: Recuperación ante problemas de captura o almacenamiento
+
+### Visualizaciones Adicionales
+
+- **Mapas de Calor**: Genera representaciones cromáticas de la concentración final
+- **Estadísticas**: Registra métricas sobre la simulación
+
+## Análisis de Datos
+
+Los resultados de la simulación pueden analizarse de varias formas:
+
+### Durante la Simulación
+
+- **Visualización en Tiempo Real**: Observar cómo se dispersan los contaminantes
+- **Estadísticas en Terminal**: Ver métricas de rendimiento en tiempo real
+
+### Después de la Simulación
+
+- **Análisis de Video**: Revisar la grabación para observar patrones
+- **Mapas de Calor**: Analizar la distribución final de contaminantes
+- **Logs**: Revisar el archivo de log para métricas detalladas
+
+## Solución de Problemas
+
+### Problemas Comunes
+
+1. **Error al Compilar el Módulo C**:
+   - Asegurarse de tener instalado un compilador C compatible
+   - Verificar que numpy está instalado antes de compilar
+   - En Windows, asegurarse de tener Visual Studio Build Tools
+
+2. **SUMO no Inicia**:
+   - Verificar que SUMO está correctamente instalado
+   - Comprobar que la ruta en `main.py` apunta a la ubicación correcta de SUMO
+   - Asegurarse de que el archivo .sumocfg es válido
+
+3. **Errores en la Grabación**:
+   - Verificar permisos de escritura en el directorio de salida
+   - Comprobar que OpenCV está correctamente instalado
+   - Asegurarse de que hay suficiente espacio en disco
+
+4. **Bajo Rendimiento**:
+   - Reducir la resolución de la cuadrícula
+   - Aumentar el intervalo de actualización
+   - Comprobar si el módulo C está siendo utilizado correctamente
+
+### Archivos de Log
+
+- **simulation.log**: Contiene información general y métricas de rendimiento
+- **simulation_recorder.log**: Información específica sobre la grabación
 
 ## Contribuciones
 
-Las contribuciones son bienvenidas. Si desea mejorar o añadir características al proyecto, siéntase libre de abrir un issue o enviar un pull request.
+Las contribuciones son bienvenidas y pueden hacerse de varias formas:
+
+1. **Mejoras de Rendimiento**: Optimizaciones adicionales en el código C
+2. **Nuevas Características**: Implementación de modelos de dispersión más avanzados
+3. **Mejoras en la Interfaz**: Enriquecimiento de la experiencia de usuario
+4. **Documentación**: Mejoras en la documentación y ejemplos
+5. **Pruebas**: Desarrollo de casos de prueba y validación de resultados
+
+Para contribuir:
+1. Crear un fork del repositorio
+2. Crear una rama para tu característica (`git checkout -b feature/nueva-caracteristica`)
+3. Confirmar los cambios (`git commit -am 'Añadir nueva característica'`)
+4. Enviar la rama (`git push origin feature/nueva-caracteristica`)
+5. Crear una Pull Request
 
 ## Licencia
 
@@ -148,4 +329,10 @@ Este proyecto está bajo la Licencia MIT. Consulte el archivo LICENSE para más 
 
 ## Contacto
 
-Para preguntas o comentarios, puede contactar a Mario Díaz Gómez en m.diazg.2021@alumnos.urjc.es .  ¡Gracias por utilizar nuestro simulador! Esperamos que esta herramienta sea útil para sus estudios sobre contaminación urbana y análisis ambiental.
+Para preguntas, sugerencias o colaboraciones, puede contactar a:
+
+Mario Díaz Gómez - m.diazg.2021@alumnos.urjc.es
+
+---
+
+Este proyecto es parte de una investigación sobre la dispersión de contaminantes en entornos urbanos y su impacto en la calidad del aire. Los resultados obtenidos son aproximaciones y deben validarse con mediciones reales para aplicaciones críticas.

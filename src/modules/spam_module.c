@@ -50,7 +50,7 @@ static PyObject* update_pollution(PyObject *self, PyObject *args) {
     double cell_width = (x_max - x_min) / grid_resolution;
     double cell_height = (y_max - y_min) / grid_resolution;
 
-    // Coeficientes fijos (puedes ajustarlos si lo deseas)
+    // Coeficientes fijos 
     double a = 0.10, b = 0.05;
 
     for (int i = i_min; i < i_max; i++) {
