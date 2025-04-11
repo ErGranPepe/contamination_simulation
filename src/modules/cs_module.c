@@ -1,4 +1,4 @@
-// cs_module.c - Módulo C optimizado para cálculos de contaminación
+// cs_module.c - Módulo C optimizado para cálculos de dispersión de contaminación
 // Este módulo proporciona funciones de alto rendimiento para calcular la dispersión de contaminantes
 // utilizando el modelo gaussiano de dispersión.
 
@@ -46,44 +46,42 @@ static void calculate_dispersion_coefficients(const char* stability_class, doubl
 }
 
 /**
- * Calcula la tasa de emisión basada en la velocidad del vehículo y el factor de emisión.
+ * Calcula la tasa de emisión de contaminantes de un vehículo basada en su velocidad.
  * 
  * @param vehicle_speed Velocidad del vehículo en m/s
- * @param emission_factor Factor de emisión configurado
+ * @param emission_factor Factor de emisión global configurado por el usuario
  * @return Tasa de emisión calculada
  */
 static double calculate_emission_rate(double vehicle_speed, double emission_factor) {
-    double base_emission = 0.1;  // Emisión base
-    // Factor de velocidad: aumenta para velocidades > 20 m/s
-    double speed_factor = (vehicle_speed > 20) ? (1 + 0.05 * (vehicle_speed - 20)) : 1.0;
+    double base_emission = 0.1;  // Emisión base para cualquier vehículo
+    
+    // Aumentar emisión para velocidades altas (>20 m/s)
+    double speed_factor = (vehicle_speed > 20) ? 
+                         (1 + 0.05 * (vehicle_speed - 20)) : 1.0;
+    
+    // Aplicar factor de emisión global (configurable por el usuario)
     return base_emission * speed_factor * emission_factor;
 }
 
 /**
- * Calcula la elevación de la pluma basada en la velocidad del vehículo.
+ * Calcula la altura de la pluma de contaminación basada en la velocidad del vehículo.
  * 
  * @param vehicle_speed Velocidad del vehículo en m/s
- * @return Altura de la pluma en metros
+ * @return Altura de la pluma en metros (mínimo 2 metros)
  */
 static double calculate_plume_rise(double vehicle_speed) {
-    // La altura mínima es 2.0 metros, o aumenta con la velocidad
-    return (vehicle_speed * 0.15 + 0.5 > 2.0) ? vehicle_speed * 0.15 + 0.5 : 2.0;
+    // La altura aumenta con la velocidad pero tiene un mínimo de 2 metros
+    return (vehicle_speed * 0.15 + 0.5 > 2.0) ? 
+           (vehicle_speed * 0.15 + 0.5) : 2.0;
 }
 
 /**
- * Actualiza la cuadrícula de contaminación para un solo vehículo.
- * Esta función es llamada desde Python para cada vehículo individualmente.
+ * Esta es la función principal que actualiza la cuadrícula de contaminación para un único vehículo.
+ * Es llamada desde Python para cada vehículo en la simulación.
  * 
- * @param grid Matriz NumPy que representa la cuadrícula de contaminación
- * @param i_min, i_max, j_min, j_max Límites de la ventana de cálculo
- * @param x, y Posición del vehículo
- * @param emission_rate Tasa de emisión del vehículo
- * @param plume_height Altura de la pluma de contaminación
- * @param wind_speed Velocidad del viento
- * @param wind_direction Dirección del viento en radianes
- * @param x_min, x_max, y_min, y_max Límites del área de simulación
- * @param grid_resolution Resolución de la cuadrícula
- * @return None (en Python)
+ * @param self Puntero al objeto Python (requerido por la API)
+ * @param args Argumentos de Python empaquetados en una tupla
+ * @return Objeto Python (None)
  */
 static PyObject* update_pollution(PyObject *self, PyObject *args) {
     PyArrayObject *grid;
@@ -183,15 +181,9 @@ static PyObject* update_pollution(PyObject *self, PyObject *args) {
  * Actualiza la cuadrícula de contaminación para múltiples vehículos en una sola llamada.
  * Esta es una versión optimizada que procesa todos los vehículos en C.
  * 
- * @param grid Matriz NumPy que representa la cuadrícula de contaminación
- * @param vehicle_list Lista de tuplas (x, y, speed) para cada vehículo
- * @param wind_speed Velocidad del viento
- * @param wind_direction Dirección del viento en radianes
- * @param emission_factor Factor de emisión
- * @param stability_class Clase de estabilidad atmosférica
- * @param x_min, x_max, y_min, y_max Límites del área de simulación
- * @param grid_resolution Resolución de la cuadrícula
- * @return None (en Python)
+ * @param self Puntero al objeto Python
+ * @param args Argumentos de Python
+ * @return Objeto Python (None)
  */
 static PyObject* update_pollution_multiple(PyObject *self, PyObject *args) {
     PyArrayObject *grid;
@@ -201,7 +193,7 @@ static PyObject* update_pollution_multiple(PyObject *self, PyObject *args) {
     double x_min, x_max, y_min, y_max;
     int grid_resolution;
 
-    // Extraer argumentos de Python - ¡ASEGURARSE DE QUE COINCIDA CON LOS ARGUMENTOS PASADOS!
+    // CORRECCIÓN: Ajustar para aceptar 11 argumentos (formato "OOdddsdddi")
     if (!PyArg_ParseTuple(args, "OOdddsdddi", 
             &grid,                // Cuadrícula de contaminación
             &vehicle_list,        // Lista de vehículos
@@ -251,12 +243,12 @@ static PyObject* update_pollution_multiple(PyObject *self, PyObject *args) {
             return NULL;
         }
 
-        double x = PyFloat_AsDouble(PyTuple_GetItem(vehicle_tuple, 0));
+        double x = PyFloat_AsDouble(PyTuple_GetItem(vehicle_tuple, 0)); // trabajamos con los floats   
         double y = PyFloat_AsDouble(PyTuple_GetItem(vehicle_tuple, 1));
         double vehicle_speed = PyFloat_AsDouble(PyTuple_GetItem(vehicle_tuple, 2));
 
         // Calcular parámetros para este vehículo
-        double emission_rate = calculate_emission_rate(vehicle_speed, emission_factor);
+        double emission_rate = calculate_emission_rate(vehicle_speed, emission_factor); // trabajamos con los floats, evitar tiempo en la conversion
         double plume_height = calculate_plume_rise(vehicle_speed);
 
         // Calcular índices de la ventana de cálculo (convertidos a enteros de forma segura)

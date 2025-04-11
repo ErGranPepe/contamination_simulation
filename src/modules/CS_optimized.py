@@ -166,16 +166,18 @@ class CS:
             
             try:
                 # Una única llamada a C para procesar todos los vehículos
-                # Nota: Asegurarse de que el número y orden de argumentos coincida con la función C
+                # IMPORTANTE: Asegurarse de que coincide exactamente con la firma de la función C
+                # PyArg_ParseTuple(args, "OOdddsdddi", ...)
                 cs_module.update_pollution_multiple(
-                    self.pollution_grid,
-                    vehicle_data,
-                    self.wind_speed,
-                    self.wind_direction,
-                    self.emission_factor,
-                    self.stability_class,
-                    self.x_min, self.x_max, self.y_min, self.y_max,
-                    self.config['grid_resolution']
+                    self.pollution_grid,           # O (objeto numpy)
+                    vehicle_data,                  # O (lista de tuplas)
+                    self.wind_speed,               # d (double)
+                    self.wind_direction,           # d (double)
+                    self.emission_factor,          # d (double)
+                    self.stability_class,          # s (string)
+                    self.x_min, self.x_max,        # d, d (doubles)
+                    self.y_min, self.y_max,        # d, d (doubles)
+                    self.config['grid_resolution'] # i (int)
                 )
                 return
             except Exception as e:

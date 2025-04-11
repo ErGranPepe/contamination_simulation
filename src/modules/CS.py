@@ -109,7 +109,7 @@ class CS:
 
         for i in range(0, self.config['grid_resolution'], 2):
             for j in range(0, self.config['grid_resolution'], 2):
-                pollution = np.mean(self.pollution_grid[i:i + 2, j:j + 2])
+                pollution = np.mean(self.pollution_grid[i:i + 2, j:j + 2]) ## Promedio de la celda 2x2 para suavizar la visualizaci√ón  
                 if pollution > 0:
                     x = self.x_min + j * cell_width
                     y = self.y_min + i * cell_height
