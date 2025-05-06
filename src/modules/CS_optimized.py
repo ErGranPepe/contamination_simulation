@@ -156,11 +156,13 @@ class CS:
             vehicle_data.append((x, y, vehicle_speed))
         end_vehicle_data = time.perf_counter()
 
+        timing_data = {}
+        timing_data['time_getting_vehicle_data'] = end_vehicle_data - start_vehicle_data
+
         if not vehicles:
             self.pollution_grid *= 0.99
-            print(f"CS_optimized.update total time: {time.perf_counter() - start_total:.6f} seconds")
-            print(f"Time getting vehicle data: {end_vehicle_data - start_vehicle_data:.6f} seconds")
-            return
+            timing_data['total_update_time'] = time.perf_counter() - start_total
+            return timing_data
 
         if use_cs_module and hasattr(cs_module, 'update_pollution_multiple'):
             try:
@@ -177,11 +179,9 @@ class CS:
                     self.config['grid_resolution']
                 )
                 elapsed_c_call = time.perf_counter() - start_c_call
-                print(f"update_pollution_multiple took {elapsed_c_call:.6f} seconds")
-                print(f"CS_optimized.update total time: {time.perf_counter() - start_total:.6f} seconds")
-                print(f"Time getting vehicle data: {end_vehicle_data - start_vehicle_data:.6f} seconds")
-                print(f"Time in C call: {elapsed_c_call:.6f} seconds")
-                return
+                timing_data['time_in_c_call'] = elapsed_c_call
+                timing_data['total_update_time'] = time.perf_counter() - start_total
+                return timing_data
             except Exception as e:
                 print(f"Error al ejecutar update_pollution_multiple: {e}")
                 print("Fallback a la implementación original...")
@@ -216,7 +216,7 @@ class CS:
                         self.config['grid_resolution']
                     )
                     elapsed = time.perf_counter() - start_time
-                    print(f"update_pollution (single vehicle) took {elapsed:.6f} seconds")
+                    timing_data.setdefault('time_per_vehicle', []).append(elapsed)
                 elif 'spam' in sys.modules:
                     start_time = time.perf_counter()
                     spam.update_pollution(
@@ -231,21 +231,22 @@ class CS:
                         self.config['grid_resolution']
                     )
                     elapsed = time.perf_counter() - start_time
-                    print(f"spam.update_pollution took {elapsed:.6f} seconds")
+                    timing_data.setdefault('time_per_vehicle', []).append(elapsed)
                 else:
                     start_time = time.perf_counter()
                     self._update_pollution_py(i_min, i_max, j_min, j_max, x, y, emission_rate, plume_height)
                     elapsed = time.perf_counter() - start_time
-                    print(f"_update_pollution_py took {elapsed:.6f} seconds")
+                    timing_data.setdefault('time_per_vehicle', []).append(elapsed)
             except Exception as e:
                 print(f"Error al actualizar contaminación para vehículo {vehicle}: {e}")
                 start_time = time.perf_counter()
                 self._update_pollution_py(i_min, i_max, j_min, j_max, x, y, emission_rate, plume_height)
                 elapsed = time.perf_counter() - start_time
-                print(f"_update_pollution_py (fallback) took {elapsed:.6f} seconds")
+                timing_data.setdefault('time_per_vehicle', []).append(elapsed)
         end_update_calls = time.perf_counter()
-        print(f"Time in update calls: {end_update_calls - start_update_calls:.6f} seconds")
-        print(f"CS_optimized.update total time: {time.perf_counter() - start_total:.6f} seconds")
+        timing_data['time_in_update_calls'] = end_update_calls - start_update_calls
+        timing_data['total_update_time'] = time.perf_counter() - start_total
+        return timing_data
 
     def _update_pollution_py(self, i_min: int, i_max: int, j_min: int, j_max: int, 
                            x: float, y: float, emission_rate: float, plume_height: float):
@@ -311,10 +312,11 @@ class CS:
         Visualiza la contaminación en la simulación SUMO.
         Crea polígonos coloreados que representan la concentración de contaminantes.
         """
+        start_visualize = time.perf_counter()
         # Obtener el valor máximo de contaminación para normalizar colores
         max_pollution = np.max(self.pollution_grid)
         if max_pollution == 0:
-            return  # No hay contaminación para visualizar
+            return 0  # No hay contaminación para visualizar
 
         # Calcular tamaño de celda
         cell_width = (self.x_max - self.x_min) / self.config['grid_resolution']
@@ -327,18 +329,18 @@ class CS:
                 i_end = min(i + 2, self.config['grid_resolution'])
                 j_end = min(j + 2, self.config['grid_resolution'])
                 pollution = np.mean(self.pollution_grid[i:i_end, j:j_end])
-                
+
                 # Solo visualizar celdas con contaminación
                 if pollution > 0:
                     # Calcular posición del polígono
                     x = self.x_min + j * cell_width
                     y = self.y_min + i * cell_height
-                    
+
                     # Determinar color basado en el nivel de contaminación
                     # Usar escala de colores HSV (azul a rojo)
                     hue = (1 - pollution / max_pollution) * 0.4
                     r, g, b = colorsys.hsv_to_rgb(hue, 1, 1)
-                    
+
                     # Crear color RGBA con transparencia basada en nivel de contaminación
                     color = (
                         int(r * 255),  # Rojo
@@ -357,3 +359,5 @@ class CS:
                     ]
                     # Añadir polígono a la visualización de SUMO
                     traci.polygon.add(polygon_id, shape, color, True, "pollution_layer")
+        elapsed_visualize = time.perf_counter() - start_visualize
+        return elapsed_visualize

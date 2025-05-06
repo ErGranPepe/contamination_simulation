@@ -112,10 +112,8 @@ def run_simulation(config):
     while step < config['parameters']['total_steps'] and traci.simulation.getMinExpectedNumber() > 0:
         traci.simulationStep()
         
-        start_update = time.perf_counter()
-        simulation.update()
-        update_time = time.perf_counter() - start_update
-        
+        timing_data = simulation.update()
+        update_time = timing_data.get('total_update_time', 0)
         visualize_time = 0
         capture_frame_time = 0
         
@@ -124,9 +122,7 @@ def run_simulation(config):
                 if polygon_id.startswith("pollution_"):
                     traci.polygon.remove(polygon_id)
             
-            start_visualize = time.perf_counter()
-            simulation.visualize()
-            visualize_time = time.perf_counter() - start_visualize
+            visualize_time = simulation.visualize()
 
             if recorder:
                 try:
@@ -185,6 +181,13 @@ def run_simulation(config):
     # Cerrar la conexión con SUMO
     traci.close()
     logging.info("SUMO connection closed")
+
+    # Run timing analysis automatically after simulation finishes
+    try:
+        import src.modules.timing_analysis as timing_analysis
+        timing_analysis.analyze_timing_log()
+    except Exception as e:
+        logging.error(f"Error running timing analysis: {e}")
 
     # Show control panel after simulation finishes
     try:
