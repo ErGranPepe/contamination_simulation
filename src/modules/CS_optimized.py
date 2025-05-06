@@ -146,61 +146,54 @@ class CS:
         Actualiza la cuadrícula de contaminación considerando todos los vehículos.
         Utiliza el módulo C optimizado para los cálculos intensivos.
         """
-        # Obtener lista de vehículos activos en la simulación
+        start_total = time.perf_counter()
         vehicles = traci.vehicle.getIDList()
-        
-        # Verificar si hay vehículos para procesar
+        start_vehicle_data = time.perf_counter()
+        vehicle_data = []
+        for vehicle in vehicles:
+            x, y = traci.vehicle.getPosition(vehicle)
+            vehicle_speed = traci.vehicle.getSpeed(vehicle)
+            vehicle_data.append((x, y, vehicle_speed))
+        end_vehicle_data = time.perf_counter()
+
         if not vehicles:
-            # Si no hay vehículos, solo aplicar decaimiento
             self.pollution_grid *= 0.99
+            print(f"CS_optimized.update total time: {time.perf_counter() - start_total:.6f} seconds")
+            print(f"Time getting vehicle data: {end_vehicle_data - start_vehicle_data:.6f} seconds")
             return
-            
-        # Intentar usar la versión optimizada para múltiples vehículos
+
         if use_cs_module and hasattr(cs_module, 'update_pollution_multiple'):
-            # Preparar datos de vehículos como lista de tuplas (x, y, velocidad)
-            vehicle_data = []
-            for vehicle in vehicles:
-                x, y = traci.vehicle.getPosition(vehicle)
-                vehicle_speed = traci.vehicle.getSpeed(vehicle)
-                vehicle_data.append((x, y, vehicle_speed))
-            
             try:
-                # Una única llamada a C para procesar todos los vehículos
-                # IMPORTANTE: Asegurarse de que coincide exactamente con la firma de la función C
-                # PyArg_ParseTuple(args, "OOdddsdddi", ...)
+                start_c_call = time.perf_counter()
                 cs_module.update_pollution_multiple(
-                    self.pollution_grid,           # O (objeto numpy)
-                    vehicle_data,                  # O (lista de tuplas)
-                    self.wind_speed,               # d (double)
-                    self.wind_direction,           # d (double)
-                    self.emission_factor,          # d (double)
-                    self.stability_class,          # s (string)
-                    self.x_min, self.x_max,        # d, d (doubles)
-                    self.y_min, self.y_max,        # d, d (doubles)
-                    self.config['grid_resolution'] # i (int)
+                    self.pollution_grid,
+                    vehicle_data,
+                    self.wind_speed,
+                    self.wind_direction,
+                    self.emission_factor,
+                    self.stability_class,
+                    self.x_min, self.x_max,
+                    self.y_min, self.y_max,
+                    self.config['grid_resolution']
                 )
+                elapsed_c_call = time.perf_counter() - start_c_call
+                print(f"update_pollution_multiple took {elapsed_c_call:.6f} seconds")
+                print(f"CS_optimized.update total time: {time.perf_counter() - start_total:.6f} seconds")
+                print(f"Time getting vehicle data: {end_vehicle_data - start_vehicle_data:.6f} seconds")
+                print(f"Time in C call: {elapsed_c_call:.6f} seconds")
                 return
             except Exception as e:
                 print(f"Error al ejecutar update_pollution_multiple: {e}")
                 print("Fallback a la implementación original...")
-        
-        # Método alternativo: procesar cada vehículo individualmente
-        
-        # Decaimiento de la contaminación global (factor 0.99)
+
         self.pollution_grid *= 0.99
-        
-        # Procesar cada vehículo individualmente
+
+        start_update_calls = time.perf_counter()
         for vehicle in vehicles:
-            # Obtener posición y velocidad del vehículo
-            x, y = traci.vehicle.getPosition(vehicle)
-            vehicle_speed = traci.vehicle.getSpeed(vehicle)
-            
-            # Calcular parámetros específicos para este vehículo
+            x, y, vehicle_speed = vehicle_data.pop(0)
             emission_rate = self.calculate_emission_rate(vehicle_speed)
             plume_height = self.calculate_plume_rise(vehicle_speed)
 
-            # Cálculo de índices para la ventana de cálculo (optimización)
-            # Solo calculamos contaminación en una ventana de 200x200m alrededor del vehículo
             i_min = max(0, int((y - self.y_min - 100) / (self.y_max - self.y_min) * self.config['grid_resolution']))
             i_max = min(self.config['grid_resolution'],
                         int((y - self.y_min + 100) / (self.y_max - self.y_min) * self.config['grid_resolution']))
@@ -209,8 +202,8 @@ class CS:
                         int((x - self.x_min + 100) / (self.x_max - self.x_min) * self.config['grid_resolution']))
 
             try:
-                # Intentar usar el módulo C optimizado para un solo vehículo
                 if use_cs_module:
+                    start_time = time.perf_counter()
                     cs_module.update_pollution(
                         self.pollution_grid,
                         i_min, i_max, j_min, j_max,
@@ -222,8 +215,10 @@ class CS:
                         self.x_min, self.x_max, self.y_min, self.y_max,
                         self.config['grid_resolution']
                     )
-                # Si no está disponible cs_module, intentar usar spam
+                    elapsed = time.perf_counter() - start_time
+                    print(f"update_pollution (single vehicle) took {elapsed:.6f} seconds")
                 elif 'spam' in sys.modules:
+                    start_time = time.perf_counter()
                     spam.update_pollution(
                         self.pollution_grid,
                         i_min, i_max, j_min, j_max,
@@ -235,13 +230,22 @@ class CS:
                         self.x_min, self.x_max, self.y_min, self.y_max,
                         self.config['grid_resolution']
                     )
-                # Si no hay módulos C disponibles, usar implementación Python pura
+                    elapsed = time.perf_counter() - start_time
+                    print(f"spam.update_pollution took {elapsed:.6f} seconds")
                 else:
+                    start_time = time.perf_counter()
                     self._update_pollution_py(i_min, i_max, j_min, j_max, x, y, emission_rate, plume_height)
+                    elapsed = time.perf_counter() - start_time
+                    print(f"_update_pollution_py took {elapsed:.6f} seconds")
             except Exception as e:
                 print(f"Error al actualizar contaminación para vehículo {vehicle}: {e}")
-                # Usar implementación Python pura como respaldo
+                start_time = time.perf_counter()
                 self._update_pollution_py(i_min, i_max, j_min, j_max, x, y, emission_rate, plume_height)
+                elapsed = time.perf_counter() - start_time
+                print(f"_update_pollution_py (fallback) took {elapsed:.6f} seconds")
+        end_update_calls = time.perf_counter()
+        print(f"Time in update calls: {end_update_calls - start_update_calls:.6f} seconds")
+        print(f"CS_optimized.update total time: {time.perf_counter() - start_total:.6f} seconds")
 
     def _update_pollution_py(self, i_min: int, i_max: int, j_min: int, j_max: int, 
                            x: float, y: float, emission_rate: float, plume_height: float):

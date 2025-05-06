@@ -98,29 +98,25 @@ class SimulationRecorder:
             
         return os.path.join(output_dir, filename)
 
+    import time
     def capture_frame(self):
         """
         Captura un frame de la simulación SUMO actual.
         """
         try:
-            # Capturar la pantalla de SUMO (vista principal)
+            start_time = time.perf_counter()
             traci.gui.screenshot("View #0", self.temp_frame_path)
-            
-            # Leer el frame capturado
             frame = cv2.imread(self.temp_frame_path)
-            
             if frame is not None:
-                # Añadir el frame a la lista
                 self.frames.append(frame)
                 logging.debug(f"Frame captured. Total frames: {len(self.frames)}")
             else:
                 logging.warning(f"Frame capture failed: image could not be read from {self.temp_frame_path}")
-                
+            elapsed = time.perf_counter() - start_time
+            logging.info(f"capture_frame took {elapsed:.6f} seconds")
         except Exception as e:
             logging.error(f"Error capturing frame: {e}")
-            
         finally:
-            # Limpiar el archivo temporal
             if os.path.exists(self.temp_frame_path):
                 try:
                     os.remove(self.temp_frame_path)

@@ -16,12 +16,13 @@ from tkinter import messagebox
 from modules.config import ContaminationConfigPlugin
 from modules.toolTip import ToolTip
 from modules.recorder_fixed import SimulationRecorder  # Módulo de grabación optimizado
-from modules.CS_optimized import CS  # Módulo de simulación de contaminación optimizado
+from modules.CS_optimized import CS, use_cs_module  # Módulo de simulación de contaminación optimizado
 import traci
 import threading
 import logging
 import matplotlib.pyplot as plt
 import numpy as np
+from ui.control_panel import ControlPanel
 
 # Configurar el sistema de logging
 logging.basicConfig(filename='simulation.log', level=logging.DEBUG,
@@ -78,6 +79,12 @@ def run_simulation(config):
     init_time = time.time() - start_time
     logging.info(f"CS initialized in {init_time:.3f}s")
 
+    # Log if using C module or not
+    if use_cs_module:
+        logging.info("Simulation running with C optimized module.")
+    else:
+        logging.info("Simulation running with Python fallback module.")
+
     # Inicializar grabador si se ha solicitado
     recorder = None
     if config['record_simulation']:
@@ -98,48 +105,54 @@ def run_simulation(config):
     logging.info("Starting simulation loop")
     step = 0
     update_times = []  # Para métricas de rendimiento
+    detailed_log = open("detailed_timing.log", "w")
+    detailed_log.write("step,update_time,visualize_time,capture_frame_time\n")
     
     # Bucle principal de simulación
     while step < config['parameters']['total_steps'] and traci.simulation.getMinExpectedNumber() > 0:
-        # Avanzar un paso en la simulación de SUMO
         traci.simulationStep()
         
-        # Medir rendimiento de actualización de contaminación
-        start_update = time.time()
+        start_update = time.perf_counter()
         simulation.update()
-        update_time = time.time() - start_update
-        update_times.append(update_time)
+        update_time = time.perf_counter() - start_update
         
-        # Actualizar visualización en intervalos específicos
+        visualize_time = 0
+        capture_frame_time = 0
+        
         if step % config['parameters']['update_interval'] == 0:
-            # Limpiar polígonos de contaminación antiguos
             for polygon_id in traci.polygon.getIDList():
                 if polygon_id.startswith("pollution_"):
                     traci.polygon.remove(polygon_id)
             
-            # Visualizar la contaminación actual
+            start_visualize = time.perf_counter()
             simulation.visualize()
+            visualize_time = time.perf_counter() - start_visualize
 
-            # Capturar frame si estamos grabando
             if recorder:
                 try:
-                    # Dar tiempo para que la visualización se actualice
                     time.sleep(0.5)
+                    start_capture = time.perf_counter()
                     recorder.capture_frame()
+                    capture_frame_time = time.perf_counter() - start_capture
                     recorder.update_progress(config['parameters']['update_interval'])
                 except Exception as e:
                     logging.error(f"Error capturing frame: {e}")
             
-            # Mostrar estadísticas de rendimiento cada 10 actualizaciones
             if len(update_times) >= 10:
                 avg_update_time = sum(update_times) / len(update_times)
                 max_update_time = max(update_times)
                 logging.info(f"Rendimiento: {avg_update_time*1000:.2f}ms/actualización (max: {max_update_time*1000:.2f}ms)")
-                update_times = []  # Reiniciar medición
-
+                update_times = []
+        
+        update_times.append(update_time)
+        
+        detailed_log.write(f"{step},{update_time:.6f},{visualize_time:.6f},{capture_frame_time:.6f}\n")
+        detailed_log.flush()
+        
         step += 1
     
-    # Mostrar estadísticas finales de rendimiento
+    detailed_log.close()
+    
     if update_times:
         avg_update_time = sum(update_times) / len(update_times)
         logging.info(f"Rendimiento final: {avg_update_time*1000:.2f}ms/actualización")
@@ -154,11 +167,9 @@ def run_simulation(config):
             recorder.close_progress_bar()
             
             if success:
-                # Visualizar el mapa de calor final
                 recorder.visualize_heatmap(simulation.pollution_grid)
                 logging.info(f"Video saved to {recorder.output_file}")
                 
-                # Preguntar si se desea eliminar la grabación
                 if messagebox.askyesno("Eliminar grabación", "¿Desea eliminar la grabación de la simulación?"):
                     if os.path.exists(recorder.output_file):
                         os.remove(recorder.output_file)
@@ -174,6 +185,19 @@ def run_simulation(config):
     # Cerrar la conexión con SUMO
     traci.close()
     logging.info("SUMO connection closed")
+
+    # Show control panel after simulation finishes
+    try:
+        import tkinter as tk
+        from ui.control_panel import ControlPanel
+
+        root = tk.Tk()
+        root.title("Simulation Timing Control Panel")
+        control_panel = ControlPanel(root)
+        control_panel.pack(fill='both', expand=True)
+        root.mainloop()
+    except Exception as e:
+        logging.error(f"Error showing control panel: {e}")
 
 def apply_config(config):
     """
@@ -243,6 +267,12 @@ if __name__ == "__main__":
     # Inicializar el plugin de configuración
     logging.info("Initializing configuration plugin")
     app = ContaminationConfigPlugin(root, apply_config)
+
+    # Remove control panel from initial GUI; it will be shown after simulation finishes
+    
+    # Configure grid weights to allow resizing if needed
+    root.grid_rowconfigure(0, weight=1)
+    root.grid_columnconfigure(0, weight=1)
     
     # Iniciar el bucle principal de la interfaz gráfica
     logging.info("Starting GUI main loop")
