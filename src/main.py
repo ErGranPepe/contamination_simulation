@@ -53,6 +53,8 @@ def estimate_simulation_time(config):
     # Convertir a minutos
     return total_time_seconds / 60.0
 
+import threading
+
 def run_simulation(config):
     """
     Ejecuta la simulación de contaminación con SUMO.
@@ -101,71 +103,106 @@ def run_simulation(config):
             messagebox.showerror("Error", f"Error al inicializar el grabador: {str(e)}")
             recorder = None
 
-    # Iniciar la simulación
-    logging.info("Starting simulation loop")
-    step = 0
-    update_times = []  # Para métricas de rendimiento
-    detailed_log = open("detailed_timing.log", "w")
-    detailed_log.write("step,update_time,visualize_time,capture_frame_time\n")
-    
-    # Bucle principal de simulación
-    while step < config['parameters']['total_steps'] and traci.simulation.getMinExpectedNumber() > 0:
-        traci.simulationStep()
-        
-        timing_data = simulation.update()
-        update_time = timing_data.get('total_update_time', 0)
-        visualize_time = 0
-        capture_frame_time = 0
-        
-        if step % config['parameters']['update_interval'] == 0:
-            for polygon_id in traci.polygon.getIDList():
-                if polygon_id.startswith("pollution_"):
-                    traci.polygon.remove(polygon_id)
-            
-            visualize_time = simulation.visualize()
+    # Variables para sincronización entre hilos
+    visualize_event = threading.Event()
+    update_lock = threading.Lock()
+    visualize_lock = threading.Lock()
+    stop_event = threading.Event()
 
-            if recorder:
-                try:
-                    time.sleep(0.5)
-                    start_capture = time.perf_counter()
-                    recorder.capture_frame()
-                    capture_frame_time = time.perf_counter() - start_capture
-                    recorder.update_progress(config['parameters']['update_interval'])
-                except Exception as e:
-                    logging.error(f"Error capturing frame: {e}")
-            
+    # Variables para compartir tiempos
+    timing_data_shared = {
+        'update_time': 0,
+        'visualize_time': 0,
+        'capture_frame_time': 0,
+        'step': 0
+    }
+
+    def simulation_thread():
+        step = 0
+        update_times = []
+        detailed_log = open("detailed_timing.log", "w")
+        detailed_log.write("step,update_time,visualize_time,capture_frame_time\n")
+
+        while step < config['parameters']['total_steps'] and traci.simulation.getMinExpectedNumber() > 0 and not stop_event.is_set():
+            traci.simulationStep()
+
+            with update_lock:
+                timing_data = simulation.update()
+                timing_data_shared['update_time'] = timing_data.get('total_update_time', 0)
+                timing_data_shared['step'] = step
+
+            update_times.append(timing_data_shared['update_time'])
+
+            # Señalizar al hilo de visualización que puede proceder si es el momento
+            if step % config['parameters']['update_interval'] == 0:
+                visualize_event.set()
+
+            # Registrar tiempos en el log
+            with visualize_lock:
+                detailed_log.write(f"{step},{timing_data_shared['update_time']:.6f},{timing_data_shared['visualize_time']:.6f},{timing_data_shared['capture_frame_time']:.6f}\n")
+                detailed_log.flush()
+
             if len(update_times) >= 10:
                 avg_update_time = sum(update_times) / len(update_times)
                 max_update_time = max(update_times)
                 logging.info(f"Rendimiento: {avg_update_time*1000:.2f}ms/actualización (max: {max_update_time*1000:.2f}ms)")
                 update_times = []
-        
-        update_times.append(update_time)
-        
-        detailed_log.write(f"{step},{update_time:.6f},{visualize_time:.6f},{capture_frame_time:.6f}\n")
-        detailed_log.flush()
-        
-        step += 1
-    
-    detailed_log.close()
-    
-    if update_times:
-        avg_update_time = sum(update_times) / len(update_times)
-        logging.info(f"Rendimiento final: {avg_update_time*1000:.2f}ms/actualización")
-    
-    logging.info(f"Simulation finished after {step} steps")
-    
+
+            step += 1
+
+        detailed_log.close()
+        stop_event.set()
+        logging.info(f"Simulation finished after {step} steps")
+
+    def visualization_thread():
+        while not stop_event.is_set():
+            # Esperar señal para visualizar
+            visualize_event.wait()
+            visualize_event.clear()
+
+            with update_lock:
+                start_visualize = time.perf_counter()
+                # Limpiar polígonos antiguos
+                for polygon_id in traci.polygon.getIDList():
+                    if polygon_id.startswith("pollution_"):
+                        traci.polygon.remove(polygon_id)
+
+                visualize_time = simulation.visualize()
+                timing_data_shared['visualize_time'] = visualize_time
+
+            with visualize_lock:
+                if recorder:
+                    try:
+                        start_capture = time.perf_counter()
+                        recorder.capture_frame()
+                        capture_frame_time = time.perf_counter() - start_capture
+                        timing_data_shared['capture_frame_time'] = capture_frame_time
+                        recorder.update_progress(config['parameters']['update_interval'])
+                    except Exception as e:
+                        logging.error(f"Error capturing frame: {e}")
+
+    # Crear y arrancar hilos
+    sim_thread = threading.Thread(target=simulation_thread, name="SimulationThread")
+    vis_thread = threading.Thread(target=visualization_thread, name="VisualizationThread")
+
+    sim_thread.start()
+    vis_thread.start()
+
+    # Esperar a que termine la simulación
+    sim_thread.join()
+    vis_thread.join()
+
     # Guardar el video si estábamos grabando
     if recorder:
         try:
             logging.info("Saving video...")
             success = recorder.save_video()
             recorder.close_progress_bar()
-            
+
             if success:
                 recorder.visualize_heatmap(simulation.pollution_grid)
                 logging.info(f"Video saved to {recorder.output_file}")
-                
+
                 if messagebox.askyesno("Eliminar grabación", "¿Desea eliminar la grabación de la simulación?"):
                     if os.path.exists(recorder.output_file):
                         os.remove(recorder.output_file)

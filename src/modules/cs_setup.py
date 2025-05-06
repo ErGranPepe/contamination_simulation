@@ -28,10 +28,11 @@ else:
 
 # Definir el módulo de extensión
 module = Extension('cs_module',
-                  sources=['cs_module.c'],
+                  sources=['src/modules/cs_module.c'],
                   include_dirs=[numpy.get_include()],
                   extra_compile_args=extra_compile_args,
                   extra_link_args=extra_link_args)
+
 
 # Configuración del paquete
 setup(

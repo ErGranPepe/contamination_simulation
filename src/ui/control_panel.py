@@ -4,6 +4,13 @@ from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 import matplotlib.pyplot as plt
 import pandas as pd
 
+import time
+import tkinter as tk
+from tkinter import ttk
+from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
+import matplotlib.pyplot as plt
+import pandas as pd
+
 class ControlPanel(tk.Frame):
     def __init__(self, parent, log_path='detailed_timing.log'):
         super().__init__(parent)
@@ -34,6 +41,7 @@ class ControlPanel(tk.Frame):
         self.plot_bottlenecks()
 
     def plot_timing_overview(self):
+        start = time.perf_counter()
         fig, ax = plt.subplots(figsize=(8, 4))
         ax.plot(self.df['step'], self.df['update_time'], label='Update Time (s)', color='blue')
         ax.plot(self.df['step'], self.df['visualize_time'], label='Visualize Time (s)', color='green')
@@ -47,8 +55,11 @@ class ControlPanel(tk.Frame):
         canvas = FigureCanvasTkAgg(fig, master=self.tab_overview)
         canvas.draw()
         canvas.get_tk_widget().pack(fill='both', expand=True)
+        end = time.perf_counter()
+        print(f"plot_timing_overview took {end - start:.4f} seconds")
 
     def plot_histogram(self):
+        start = time.perf_counter()
         fig, ax = plt.subplots(figsize=(8, 4))
         ax.hist(self.df['update_time'], bins=30, color='skyblue', edgecolor='black')
         ax.set_xlabel('Update Time (s)')
@@ -59,8 +70,11 @@ class ControlPanel(tk.Frame):
         canvas = FigureCanvasTkAgg(fig, master=self.tab_histogram)
         canvas.draw()
         canvas.get_tk_widget().pack(fill='both', expand=True)
+        end = time.perf_counter()
+        print(f"plot_histogram took {end - start:.4f} seconds")
 
     def plot_boxplot(self):
+        start = time.perf_counter()
         fig, ax = plt.subplots(figsize=(8, 4))
         ax.boxplot([self.df['update_time'], self.df['visualize_time'], self.df['capture_frame_time']],
                    labels=['Update Time', 'Visualize Time', 'Capture Frame Time'])
@@ -71,8 +85,11 @@ class ControlPanel(tk.Frame):
         canvas = FigureCanvasTkAgg(fig, master=self.tab_boxplot)
         canvas.draw()
         canvas.get_tk_widget().pack(fill='both', expand=True)
+        end = time.perf_counter()
+        print(f"plot_boxplot took {end - start:.4f} seconds")
 
     def plot_bottlenecks(self):
+        start = time.perf_counter()
         mean_update = self.df['update_time'].mean()
         std_update = self.df['update_time'].std()
         threshold = mean_update + 2 * std_update
@@ -93,3 +110,5 @@ class ControlPanel(tk.Frame):
         canvas = FigureCanvasTkAgg(fig, master=self.tab_bottlenecks)
         canvas.draw()
         canvas.get_tk_widget().pack(fill='both', expand=True)
+        end = time.perf_counter()
+        print(f"plot_bottlenecks took {end - start:.4f} seconds")

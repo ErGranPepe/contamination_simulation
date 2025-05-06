@@ -25,6 +25,7 @@ try:
     import cs_module
     use_cs_module = True
     print("Usando módulo C optimizado (cs_module) para cálculos de contaminación")
+    print(f"cs_module loaded from: {cs_module.__file__}")
 except ImportError:
     try:
         # Si falla, utiliza el módulo original
