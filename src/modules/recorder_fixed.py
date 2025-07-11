@@ -17,6 +17,7 @@ from tqdm import tqdm
 import matplotlib.pyplot as plt
 import numpy as np
 from typing import Dict, Any, Optional
+import time
 
 # Configurar logging
 logging.basicConfig(filename='simulation_recorder.log', level=logging.DEBUG,
@@ -98,7 +99,6 @@ class SimulationRecorder:
             
         return os.path.join(output_dir, filename)
 
-    import time
     def capture_frame(self):
         """
         Captura un frame de la simulación SUMO actual.
@@ -123,34 +123,41 @@ class SimulationRecorder:
                 except Exception as e:
                     logging.error(f"Error removing temp frame: {e}")
 
-    def overlay_text(self, frame):
+    def overlay_text(self, frame, species_name=None, grid=None, step=None):
         """
-        Añade información de texto sobre el frame del video.
+        Añade información de texto sobre el frame del video, incluyendo especie y métricas.
         
         Args:
             frame: Frame del video a modificar
+            species_name: Nombre de la especie (opcional)
+            grid: Cuadrícula de contaminación (opcional)
+            step: Paso de simulación (opcional)
             
         Returns:
             Frame con el texto añadido
         """
         # Crear texto con información de la simulación
         parameters_text = "\n".join([f"{key}: {value}" for key, value in self.parameters.items()])
-        simulation_time = traci.simulation.getTime()
-        num_vehicles = traci.vehicle.getIDCount()
+        simulation_time = traci.simulation.getTime() if traci.isLoaded() else 0
+        num_vehicles = traci.vehicle.getIDCount() if traci.isLoaded() else 0
         additional_info = f"Time: {simulation_time:.2f} s\nVehicles: {num_vehicles}"
-        text = f"Config: {os.path.basename(self.sumo_config)}\nParameters:\n{parameters_text}\n{additional_info}"
-        
+        overlay = f"Config: {os.path.basename(self.sumo_config)}\nParameters:\n{parameters_text}\n{additional_info}"
+        if species_name and grid is not None:
+            overlay += f"\nSpecies: {species_name}"
+            overlay += f"\nMax: {np.max(grid):.2e}  Mean: {np.mean(grid):.2e}"
+        if step is not None:
+            overlay += f"\nStep: {step}"
         # Añadir el texto al frame
         y0, dy = 30, 30
-        for i, line in enumerate(text.split('\n')):
+        for i, line in enumerate(overlay.split('\n')):
             y = y0 + i * dy
             cv2.putText(frame, line, (10, y), cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 255, 255), 2, cv2.LINE_AA)
             
         return frame
 
-    def save_video(self):
+    def save_video(self, species_name=None, grid=None, step=None):
         """
-        Guarda los frames capturados como un video.
+        Guarda los frames capturados como un video, con overlay avanzado.
         
         Returns:
             Boolean indicando si el guardado fue exitoso
@@ -169,7 +176,7 @@ class SimulationRecorder:
             
             # Escribir cada frame en el video
             for i, frame in enumerate(self.frames):
-                frame = self.overlay_text(frame)
+                frame = self.overlay_text(frame, species_name=species_name, grid=grid, step=step)
                 video.write(frame)
                 if i % 10 == 0:
                     logging.debug(f"Writing frame {i+1}/{len(self.frames)}")

@@ -1,0 +1,27 @@
+2025-07-10 17:00:44,688 - INFO - Starting application
+2025-07-10 17:00:44,796 - INFO - Initializing configuration plugin
+2025-07-10 17:00:44,987 - INFO - Starting GUI main loop
+2025-07-10 17:01:37,982 - INFO - Applying config
+2025-07-10 17:01:39,201 - INFO - Starting SUMO...
+2025-07-10 17:01:39,201 - INFO - Config applied
+2025-07-10 17:01:43,695 - INFO - SUMO started with config: C:/Users/mario/Desktop/cosas/TFG_PROYECTO/configuracion_pruebas_tfg.sumocfg
+2025-07-10 17:01:43,695 - INFO - Connecting to TraCI...
+2025-07-10 17:01:43,696 - INFO - CS initialized in 0.001s
+2025-07-10 17:01:43,697 - INFO - Simulation running with C optimized module.
+2025-07-10 17:01:43,708 - INFO - Initializing recorder...
+2025-07-10 17:01:43,735 - INFO - Recorder initialized with output file: C:/Users/mario/Desktop/cosas/TFG_PROYECTO/prueba_10_07_2025_2.mp4
+2025-07-10 17:01:44,024 - INFO - Rendimiento: 0.00ms/actualización (max: 0.00ms)
+2025-07-10 17:01:44,343 - INFO - Rendimiento: 0.00ms/actualización (max: 0.00ms)
+2025-07-10 17:01:44,663 - INFO - Rendimiento: 0.00ms/actualización (max: 0.00ms)
+2025-07-10 17:01:44,993 - INFO - Rendimiento: 0.00ms/actualización (max: 0.00ms)
+2025-07-10 17:01:45,373 - INFO - Rendimiento: 0.00ms/actualización (max: 0.00ms)
+2025-07-10 17:01:45,774 - INFO - Rendimiento: 0.00ms/actualización (max: 0.00ms)
+2025-07-10 17:01:46,171 - INFO - Rendimiento: 0.00ms/actualización (max: 0.00ms)
+2025-07-10 17:01:46,599 - INFO - Rendimiento: 0.00ms/actualización (max: 0.00ms)
+2025-07-10 17:01:47,031 - INFO - Rendimiento: 0.00ms/actualización (max: 0.00ms)
+2025-07-10 17:01:47,439 - INFO - Rendimiento: 0.00ms/actualización (max: 0.00ms)
+2025-07-10 17:01:47,440 - INFO - Simulation finished after 100 steps
+2025-07-10 17:01:47,454 - INFO - Exported pollution grid to pollution_grid_100.vtk
+2025-07-10 17:02:01,035 - INFO - Application closed
+2025-07-11 19:49:48,967 - INFO - Starting SUMO...
+2025-07-11 19:53:00,658 - ERROR - Error starting SUMO: Could not connect in 59 tries

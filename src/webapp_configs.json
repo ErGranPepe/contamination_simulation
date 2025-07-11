@@ -1,0 +1,42 @@
+[
+  {
+    "timestamp": "2025-07-11T19:49:48.962965",
+    "config": {
+      "sumo_config": "mostoels",
+      "species_list": [
+        "NOx",
+        "CO",
+        "PM"
+      ],
+      "total_steps": "1000",
+      "file": {},
+      "parameters": {
+        "total_steps": 1000
+      }
+    },
+    "stats": {}
+  },
+  {
+    "timestamp": "2025-07-11T19:53:08.677303",
+    "config": {
+      "sumo_config": "mostoels",
+      "species_list": [
+        "NOx",
+        "CO",
+        "PM"
+      ],
+      "total_steps": "1000",
+      "file": {},
+      "parameters": {
+        "total_steps": 1000
+      }
+    },
+    "stats": {
+      "cpu_percent_start": 0.0,
+      "cpu_percent_end": 17.8,
+      "mem_used_start_MB": 15198,
+      "mem_used_end_MB": 14965,
+      "duration_sec": 199.70333552360535
+    }
+  }
+]

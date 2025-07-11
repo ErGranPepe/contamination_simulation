@@ -1,0 +1,445 @@
+<!-- Panel de ayuda técnica / documentación -->
+<button class="btn btn-info mb-3" type="button" data-bs-toggle="modal" data-bs-target="#helpModal">Ayuda técnica / Documentación</button>
+
+<div class="modal fade" id="helpModal" tabindex="-1" aria-labelledby="helpModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="helpModalLabel">Ayuda técnica y documentación</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+      </div>
+      <div class="modal-body">
+        <h6>Parámetros principales</h6>
+        <ul>
+          <li><b>Archivo SUMO config:</b> Ruta al archivo .sumocfg de tu red SUMO.</li>
+          <li><b>Especies:</b> Lista separada por comas. Ejemplo: NOx,CO,PM. Puedes simular cualquier combinación.</li>
+          <li><b>Pasos:</b> Número total de pasos de simulación. Más pasos = más duración y precisión.</li>
+          <li><b>Resolución:</b> Tamaño de la malla espacial. Más alto = más detalle, pero más lento.</li>
+          <li><b>Viento (m/s, °):</b> Velocidad y dirección media del viento. 0°=Norte, 90°=Este, 180°=Sur, 270°=Oeste.</li>
+          <li><b>Clase de estabilidad:</b> A=Muy inestable, F=Muy estable. Afecta a la dispersión vertical.</li>
+          <li><b>Emisión:</b> Factor global de emisión de contaminantes.</li>
+          <li><b>Intervalo:</b> Cada cuántos pasos se actualiza la visualización y grabación.</li>
+          <li><b>Temperatura, Humedad:</b> Condiciones meteorológicas.</li>
+          <li><b>Altura chimenea:</b> Altura de la fuente emisora.</li>
+          <li><b>Deposición:</b> Tasa de deposición de contaminantes (0=suspendido, 1=rápida deposición).</li>
+        </ul>
+        <h6>Modelos y exportación</h6>
+        <ul>
+          <li>Simulación CFD multiespecie optimizada en C. Meteorología avanzada y campos variables.</li>
+          <li>Exportación automática de resultados a <b>CSV</b> y <b>VTK</b> para todas las especies y pasos finales.</li>
+          <li>Grabación de vídeo (<b>MP4</b>) con overlays técnicos y animaciones de evolución temporal (<b>GIF</b>).</li>
+          <li>Panel comparativo y visualización temporal de especies (gráficas y animaciones).</li>
+          <li>Panel de análisis técnico: gráficos de rendimiento, cuellos de botella, recursos usados.</li>
+        </ul>
+        <h6>Consejos de uso</h6>
+        <ul>
+          <li>Usa resoluciones y pasos moderados para pruebas rápidas. Para resultados científicos, aumenta ambos.</li>
+          <li>Consulta los tooltips de cada parámetro para detalles y rangos recomendados.</li>
+          <li>Puedes descargar todos los resultados y animaciones desde la web tras cada simulación.</li>
+          <li>El historial guarda todas las configuraciones y estadísticas para reproducibilidad.</li>
+        </ul>
+        <h6>Referencias</h6>
+        <ul>
+          <li>SUMO: <a href="https://www.eclipse.dev/sumo/" target="_blank">https://www.eclipse.dev/sumo/</a></li>
+          <li>Modelo de dispersión: Gaussian Plume, CFD avanzado, bibliografía en README.</li>
+        </ul>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+      </div>
+    </div>
+  </div>
+</div>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <div class="row mb-3">
+        <div class="col-md-6">
+            <div class="stat-box">
+                <div class="panel-title">Animación temporal de la evolución de especies</div>
+                <div class="input-group mb-2">
+                    <input type="text" id="gif-species" class="form-control" placeholder="Especies (ej: NOx,CO,PM) vacío=Todas">
+                    <button class="btn btn-outline-primary" type="button" onclick="downloadEvolutionGif()">Descargar GIF</button>
+                </div>
+                <img id="evolution-gif" style="max-width:100%;border:1px solid #ccc;display:none;"/>
+            </div>
+        </div>
+    </div>
+<script>
+function downloadEvolutionGif() {
+    let species = document.getElementById('gif-species').value.trim();
+    let url = '/evolution_gif';
+    if(species) url += '?species=' + encodeURIComponent(species);
+    let img = document.getElementById('evolution-gif');
+    img.style.display = 'block';
+    img.src = url + (url.includes('?') ? '&' : '?') + 't=' + Date.now();
+}
+</script>
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Simulación de Contaminación Urbana - TFG</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <style>
+        .stat-box { background: #f8f9fa; border-radius: 8px; padding: 1em; margin-bottom: 1em; }
+        .panel-title { font-weight: bold; }
+        .scrollable { max-height: 300px; overflow-y: auto; }
+        .img-analysis { max-width: 100%; border: 1px solid #ccc; margin-bottom: 1em; }
+    </style>
+</head>
+<body class="bg-light">
+<div class="container py-4">
+    <h1 class="mb-4">Simulación de Contaminación Urbana <span class="fs-5 text-secondary">(TFG Ingeniería Informática)</span></h1>
+    <form id="sim-form" class="mb-4 row g-2">
+        <div class="col-md-2">
+            <input type="text" class="form-control" name="sumo_config" placeholder="Archivo SUMO config" required title="Ruta al archivo .sumocfg de SUMO" aria-label="Archivo SUMO config">
+            <small class="form-text text-muted">Ruta al archivo .sumocfg de tu red SUMO.</small>
+        </div>
+        <div class="col-md-1">
+            <input type="text" class="form-control" name="species_list" placeholder="Especies (ej: NOx,CO,PM)" value="NOx,CO,PM" title="Lista de especies contaminantes separadas por coma. Ejemplo: NOx,CO,PM. Puedes añadir las que quieras." aria-label="Lista de especies contaminantes">
+            <small class="form-text text-muted">Lista separada por comas. Ejemplo: NOx,CO,PM.</small>
+        </div>
+        <div class="col-md-1">
+            <input type="number" class="form-control" name="total_steps" placeholder="Pasos" value="1000" min="10" max="1000000" title="Número total de pasos de simulación. Valores típicos: 1000-10000. Cuanto mayor, más duración y precisión." aria-label="Número total de pasos de simulación">
+            <small class="form-text text-muted">Número total de pasos. Más pasos = más duración y precisión.</small>
+        </div>
+        <div class="col-md-1">
+            <input type="number" class="form-control" name="grid_resolution" placeholder="Resolución" value="100" min="10" max="1000" title="Resolución de la malla espacial. Más alto = más detalle, pero más lento. Ejemplo típico: 100." aria-label="Resolución de la malla">
+            <small class="form-text text-muted">Tamaño de la malla espacial. Más alto = más detalle, pero más lento.</small>
+        </div>
+        <div class="col-md-1">
+            <input type="number" class="form-control" name="wind_speed" placeholder="Viento (m/s)" value="2" step="0.1" min="0" max="50" title="Velocidad media del viento en m/s. Valores típicos: 0.5-10 m/s." aria-label="Velocidad del viento">
+            <small class="form-text text-muted">Velocidad media del viento (m/s).</small>
+        </div>
+        <div class="col-md-1">
+            <input type="number" class="form-control" name="wind_direction" placeholder="Dir. viento (°)" value="90" step="1" min="0" max="359" title="Dirección del viento en grados (0=Norte, 90=Este, 180=Sur, 270=Oeste)" aria-label="Dirección del viento">
+            <small class="form-text text-muted">Dirección del viento (0=N, 90=E, 180=S, 270=O).</small>
+        </div>
+        <div class="col-md-1">
+            <select class="form-select" name="stability_class" title="Clase de estabilidad atmosférica (A=Muy inestable, F=Muy estable)" aria-label="Clase de estabilidad atmosférica">
+                <option value="A">A (Muy inestable)</option>
+                <option value="B">B (Inestable)</option>
+                <option value="C">C (Ligeramente inestable)</option>
+                <option value="D" selected>D (Neutra)</option>
+                <option value="E">E (Ligeramente estable)</option>
+                <option value="F">F (Muy estable)</option>
+            </select>
+            <small class="form-text text-muted">Clase de estabilidad atmosférica. A=Muy inestable, F=Muy estable.</small>
+        </div>
+        <div class="col-md-1">
+            <input type="number" class="form-control" name="emission_factor" placeholder="Emisión" value="1.0" step="0.01" min="0" max="100" title="Factor global de emisión de contaminantes. Ajusta la intensidad de las fuentes." aria-label="Factor global de emisión">
+            <small class="form-text text-muted">Factor global de emisión de contaminantes.</small>
+        </div>
+        <div class="col-md-1">
+            <input type="number" class="form-control" name="update_interval" placeholder="Intervalo" value="10" min="1" max="10000" title="Intervalo de actualización/visualización. Más bajo = más frames, más lento." aria-label="Intervalo de actualización">
+            <small class="form-text text-muted">Cada cuántos pasos se actualiza la visualización.</small>
+        </div>
+        <div class="col-md-1">
+            <input type="number" class="form-control" name="temperature" placeholder="Temp (°C)" value="20" step="0.1" min="-50" max="60" title="Temperatura ambiente en °C. Rango típico: -10 a 40." aria-label="Temperatura ambiente">
+            <small class="form-text text-muted">Temperatura ambiente en °C.</small>
+        </div>
+        <div class="col-md-1">
+            <input type="number" class="form-control" name="humidity" placeholder="Humedad (%)" value="50" step="1" min="0" max="100" title="Humedad relativa (%). 0 = seco, 100 = saturado." aria-label="Humedad relativa">
+            <small class="form-text text-muted">Humedad relativa (%). 0 = seco, 100 = saturado.</small>
+        </div>
+        <div class="col-md-1">
+            <input type="number" class="form-control" name="chimney_height" placeholder="Alt. chimenea (m)" value="2" step="0.1" min="0" max="500" title="Altura de chimenea o fuente (m). Influye en la dispersión vertical." aria-label="Altura de chimenea">
+            <small class="form-text text-muted">Altura de la fuente emisora (m).</small>
+        </div>
+        <div class="col-md-1">
+            <input type="number" class="form-control" name="deposition_rate" placeholder="Deposición" value="0.01" step="0.001" min="0" max="1" title="Tasa de deposición de contaminantes. 0 = sin deposición, 1 = máxima deposición." aria-label="Tasa de deposición">
+            <small class="form-text text-muted">Tasa de deposición (0=suspendido, 1=máxima deposición).</small>
+        </div>
+        <div class="col-md-2">
+            <input type="file" class="form-control" id="file-upload" name="file" aria-label="Subir archivo de configuración">
+            <small class="form-text text-muted">Opcional: sube un archivo de configuración.</small>
+        </div>
+        <div class="col-md-2">
+            <button type="submit" class="btn btn-primary w-100" aria-label="Lanzar simulación">Lanzar Simulación</button>
+        </div>
+    </form>
+    <div class="row mb-3">
+        <div class="col-md-6">
+            <label for="realtime-species" class="form-label">Visualización en tiempo real (heatmap):</label>
+            <div class="input-group mb-2">
+                <input type="text" id="realtime-species" class="form-control" value="NOx" placeholder="Especie (ej: NOx)">
+                <button class="btn btn-outline-secondary" type="button" onclick="showRealtime()">Ver</button>
+            </div>
+            <img id="realtime-frame" style="max-width:100%;border:1px solid #ccc;display:none;" alt="Visualización en tiempo real heatmap"/>
+        </div>
+    </div>
+    <div id="status" class="mb-3"></div>
+    <script>
+    // --- Sistema de alertas visuales Bootstrap para feedback ---
+    function showStatus(message, type = 'info', timeout = 6000) {
+        const statusDiv = document.getElementById('status');
+        const alertType = {
+            'success': 'alert-success',
+            'error': 'alert-danger',
+            'danger': 'alert-danger',
+            'warning': 'alert-warning',
+            'info': 'alert-info'
+        }[type] || 'alert-info';
+        statusDiv.innerHTML = `<div class="alert ${alertType} alert-dismissible fade show" role="alert">
+            ${message}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Cerrar"></button>
+        </div>`;
+        if(timeout > 0) setTimeout(() => {
+            let alert = statusDiv.querySelector('.alert');
+            if(alert) alert.classList.remove('show');
+            setTimeout(()=>{statusDiv.innerHTML='';}, 500);
+        }, timeout);
+    }
+    </script>
+    <div class="row">
+        <div class="col-md-6">
+            <div class="stat-box">
+                <div class="panel-title">Estadísticas de Recursos y Última Simulación</div>
+                <div id="stats-panel"></div>
+            </div>
+            <div class="stat-box">
+                <div class="panel-title">Historial de Configuraciones</div>
+                <div class="scrollable" id="history-panel"></div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="stat-box">
+                <div class="panel-title">Resultados y Descargas</div>
+                <ul id="results-list" class="list-group mb-2"></ul>
+                <div class="mt-2">
+                  <b>Descargas rápidas:</b>
+                  <ul>
+                    <li><a href="/download/pollution_evolution.csv">Evolución temporal (CSV)</a></li>
+                    <li><a href="/download/pollution_evolution.json">Evolución temporal (JSON)</a></li>
+                    <li><a href="/evolution_gif" target="_blank">Animación evolución (GIF)</a></li>
+                    <li><a href="/download/simulation_output.mp4">Vídeo de la simulación (MP4)</a></li>
+                  </ul>
+                  <span class="text-muted small">También puedes descargar los archivos VTK y CSV de cada especie abajo.</span>
+                </div>
+            </div>
+            <div class="stat-box">
+                <div class="panel-title">Análisis Técnico y Gráficos</div>
+                <div id="analysis-panel"></div>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+// --- Panel comparativo y visualización temporal de especies ---
+</script>
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="stat-box">
+                <div class="panel-title">Evolución Temporal y Comparativa de Especies</div>
+                <div class="form-inline mb-2">
+                    <input type="text" id="evolution-species" class="form-control mr-2" placeholder="Nombre de especie (ej: NO2)">
+                    <button class="btn btn-primary mr-2" onclick="showEvolution()">Ver evolución</button>
+                    <button class="btn btn-secondary" onclick="showComparison()">Comparar todas</button>
+                </div>
+                <canvas id="evolution-chart" height="60"></canvas>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+let evolutionChart = null;
+function showEvolution() {
+    let species = document.getElementById('evolution-species').value.trim();
+    if(!species) return;
+    fetch(`/evolution/${species}`).then(r=>r.json()).then(data=>{
+        if(data.error) {
+            alert(data.error);
+            return;
+        }
+        renderChart([{
+            label: data.species,
+            data: data.values,
+            borderColor: 'rgba(54, 162, 235, 1)',
+            fill: false
+        }], data.steps);
+    });
+}
+function showComparison() {
+    fetch('/compare').then(r=>r.json()).then(data=>{
+        if(data.error) {
+            alert(data.error);
+            return;
+        }
+        let datasets = [];
+        let steps = null;
+        let colors = [
+            'rgba(54, 162, 235, 1)',
+            'rgba(255, 99, 132, 1)',
+            'rgba(255, 206, 86, 1)',
+            'rgba(75, 192, 192, 1)',
+            'rgba(153, 102, 255, 1)',
+            'rgba(255, 159, 64, 1)'
+        ];
+        let i = 0;
+        for(const [species, d] of Object.entries(data)) {
+            if(!steps || d.steps.length > steps.length) steps = d.steps;
+            datasets.push({
+                label: species,
+                data: d.values,
+                borderColor: colors[i%colors.length],
+                fill: false
+            });
+            i++;
+        }
+        renderChart(datasets, steps);
+    });
+}
+function renderChart(datasets, steps) {
+    let ctx = document.getElementById('evolution-chart').getContext('2d');
+    if(evolutionChart) evolutionChart.destroy();
+    evolutionChart = new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: steps,
+            datasets: datasets
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                legend: { position: 'top' },
+                title: { display: true, text: 'Evolución temporal de especies (media por paso)' }
+            },
+            scales: {
+                x: { title: { display: true, text: 'Paso temporal' } },
+                y: { title: { display: true, text: 'Concentración media' } }
+            }
+        }
+    });
+}
+function fetchResults() {
+    fetch('/results').then(r=>r.json()).then(data=>{
+        let ul = document.getElementById('results-list');
+        ul.innerHTML = '';
+        data.files.forEach(f=>{
+            let li = document.createElement('li');
+            li.className = 'list-group-item';
+            if(f.endsWith('.csv')) {
+                let sp = f.split('_');
+                let species = sp[2];
+                let step = sp[3].split('.')[0];
+                li.innerHTML = `<a href="/download/${f}">${f}</a> | <a href="/heatmap/${species}/${step}" target="_blank">Ver Heatmap</a>`;
+            } else {
+                li.innerHTML = `<a href="/download/${f}">${f}</a>`;
+            }
+            ul.appendChild(li);
+        });
+    });
+}
+function fetchStats() {
+    fetch('/stats').then(r=>r.json()).then(data=>{
+        let html = '';
+        if(data.last_simulation_stats) {
+            html += `<b>CPU inicio:</b> ${data.last_simulation_stats.cpu_percent_start}%<br>`;
+            html += `<b>CPU fin:</b> ${data.last_simulation_stats.cpu_percent_end}%<br>`;
+            html += `<b>RAM inicio:</b> ${data.last_simulation_stats.mem_used_start_MB} MB<br>`;
+            html += `<b>RAM fin:</b> ${data.last_simulation_stats.mem_used_end_MB} MB<br>`;
+            html += `<b>Duración simulación:</b> ${data.last_simulation_stats.duration_sec.toFixed(2)} s<br>`;
+        }
+        html += `<b>CPU actual:</b> ${data.current_cpu_percent}%<br>`;
+        html += `<b>RAM usada:</b> ${data.current_mem_used_MB} MB / ${data.current_mem_total_MB} MB`;
+        document.getElementById('stats-panel').innerHTML = html;
+    });
+}
+function fetchHistory() {
+    fetch('/history').then(r=>r.json()).then(data=>{
+        let html = '<ul class="list-group">';
+        data.history.forEach(entry=>{
+            html += `<li class="list-group-item small"><b>${entry.timestamp}:</b> ${JSON.stringify(entry.config)}<br>`;
+            if(entry.stats && Object.keys(entry.stats).length>0) {
+                html += `<span class="text-success">Stats: ${JSON.stringify(entry.stats)}</span>`;
+            }
+            html += '</li>';
+        });
+        html += '</ul>';
+        document.getElementById('history-panel').innerHTML = html;
+    });
+}
+function fetchAnalysis() {
+    fetch('/analysis').then(r=>r.json()).then(data=>{
+        let panel = document.getElementById('analysis-panel');
+        panel.innerHTML = '';
+        if(data.analysis==='ok') {
+            for(const [name, b64] of Object.entries(data.images)) {
+                panel.innerHTML += `<div><b>${name}</b><br><img class="img-analysis" src="data:image/png;base64,${b64}"/></div>`;
+            }
+        } else {
+            panel.innerHTML = `<span class="text-danger">No hay análisis disponible: ${data.error||''}</span>`;
+        }
+    });
+}
+document.getElementById('sim-form').onsubmit = function(e) {
+    e.preventDefault();
+    let data = Object.fromEntries(new FormData(this).entries());
+    data.species_list = data.species_list.split(',').map(s=>s.trim());
+    data.parameters = { total_steps: parseInt(data.total_steps) };
+    showStatus('Lanzando simulación... Por favor, espera.', 'info', 8000);
+    fetch('/run_simulation', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify(data)
+    }).then(r=>r.json()).then(resp=>{
+        if(resp.error) {
+            showStatus(`<b>Error:</b> ${resp.error}`, 'danger', 12000);
+        } else {
+            showStatus(`<b>Simulación lanzada:</b> ${resp.status||'OK'}`, 'success', 8000);
+        }
+        setTimeout(()=>{
+            fetchResults();
+            fetchStats();
+            fetchHistory();
+            fetchAnalysis();
+        }, 5000);
+    }).catch(err=>{
+        showStatus(`<b>Error de red:</b> ${err.message}`, 'danger', 12000);
+    });
+};
+document.getElementById('file-upload').onchange = function(e) {
+    let file = e.target.files[0];
+    if(!file) return;
+    let formData = new FormData();
+    formData.append('file', file);
+    showStatus('Subiendo archivo...', 'info', 6000);
+    fetch('/upload', {
+        method: 'POST',
+        body: formData
+    }).then(r=>r.json()).then(resp=>{
+        if(resp.error) {
+            showStatus(`<b>Error al subir:</b> ${resp.error}`, 'danger', 12000);
+        } else {
+            showStatus(`<b>Archivo subido:</b> ${resp.status||'OK'}`, 'success', 6000);
+        }
+    }).catch(err=>{
+        showStatus(`<b>Error de red:</b> ${err.message}`, 'danger', 12000);
+    });
+};
+function showRealtime() {
+    let species = document.getElementById('realtime-species').value.trim();
+    if(!species) return;
+    let img = document.getElementById('realtime-frame');
+    img.style.display = 'block';
+    function updateFrame() {
+        img.src = `/frame/${species}?t=${Date.now()}`;
+    }
+    updateFrame();
+    // Actualiza cada 3 segundos
+    if(window._realtimeInterval) clearInterval(window._realtimeInterval);
+    window._realtimeInterval = setInterval(updateFrame, 3000);
+}
+setInterval(fetchResults, 10000);
+setInterval(fetchStats, 5000);
+setInterval(fetchHistory, 20000);
+setInterval(fetchAnalysis, 30000);
+fetchResults();
+fetchStats();
+fetchHistory();
+fetchAnalysis();
+</script>
+</body>
+</html>

@@ -8857,3 +8857,164 @@
 2025-05-06 20:58:34,517 - DEBUG - STREAM b'pHYs' 57 9
 2025-05-06 20:58:34,517 - DEBUG - STREAM b'IDAT' 78 364
 2025-05-06 20:59:16,534 - INFO - Application closed
+2025-07-10 16:36:09,405 - INFO - Starting application
+2025-07-10 16:36:10,017 - INFO - Initializing configuration plugin
+2025-07-10 16:36:10,545 - INFO - Starting GUI main loop
+2025-07-10 16:37:12,254 - INFO - Applying config
+2025-07-10 16:37:13,677 - INFO - Starting SUMO...
+2025-07-10 16:37:13,677 - INFO - Config applied
+2025-07-10 16:37:17,807 - INFO - SUMO started with config: C:/Users/mario/Desktop/cosas/TFG_PROYECTO/configuracion_pruebas_tfg.sumocfg
+2025-07-10 16:37:17,807 - INFO - Connecting to TraCI...
+2025-07-10 16:37:17,810 - INFO - CS initialized in 0.003s
+2025-07-10 16:37:17,810 - INFO - Simulation running with Python fallback module.
+2025-07-10 16:37:17,811 - INFO - Initializing recorder...
+2025-07-10 16:37:17,834 - INFO - SimulationRecorder initialized. Output file: C:/Users/mario/Desktop/cosas/TFG_PROYECTO/prueba_10_07_2025_1.mp4
+2025-07-10 16:37:17,834 - INFO - Recorder initialized with output file: C:/Users/mario/Desktop/cosas/TFG_PROYECTO/prueba_10_07_2025_1.mp4
+2025-07-10 16:37:17,889 - ERROR - Error capturing frame: name 'time' is not defined
+2025-07-10 16:37:18,110 - INFO - Rendimiento: 1.14ms/actualización (max: 2.15ms)
+2025-07-10 16:37:18,202 - ERROR - Error capturing frame: name 'time' is not defined
+2025-07-10 16:37:18,442 - INFO - Rendimiento: 2.90ms/actualización (max: 13.70ms)
+2025-07-10 16:37:18,570 - ERROR - Error capturing frame: name 'time' is not defined
+2025-07-10 16:37:18,788 - INFO - Rendimiento: 2.19ms/actualización (max: 2.72ms)
+2025-07-10 16:37:18,906 - ERROR - Error capturing frame: name 'time' is not defined
+2025-07-10 16:37:19,138 - INFO - Rendimiento: 3.09ms/actualización (max: 3.80ms)
+2025-07-10 16:37:19,304 - ERROR - Error capturing frame: name 'time' is not defined
+2025-07-10 16:37:19,537 - INFO - Rendimiento: 3.85ms/actualización (max: 5.25ms)
+2025-07-10 16:37:19,686 - ERROR - Error capturing frame: name 'time' is not defined
+2025-07-10 16:37:19,911 - INFO - Rendimiento: 3.60ms/actualización (max: 4.39ms)
+2025-07-10 16:37:20,060 - ERROR - Error capturing frame: name 'time' is not defined
+2025-07-10 16:37:20,292 - INFO - Rendimiento: 5.18ms/actualización (max: 7.07ms)
+2025-07-10 16:37:20,497 - ERROR - Error capturing frame: name 'time' is not defined
+2025-07-10 16:37:20,718 - INFO - Rendimiento: 5.35ms/actualización (max: 6.42ms)
+2025-07-10 16:37:20,928 - ERROR - Error capturing frame: name 'time' is not defined
+2025-07-10 16:37:21,163 - INFO - Rendimiento: 6.00ms/actualización (max: 7.68ms)
+2025-07-10 16:37:21,332 - ERROR - Error capturing frame: name 'time' is not defined
+2025-07-10 16:37:21,564 - INFO - Rendimiento: 6.37ms/actualización (max: 8.61ms)
+2025-07-10 16:37:21,565 - INFO - Simulation finished after 100 steps
+2025-07-10 16:37:54,895 - INFO - Applying config
+2025-07-10 16:37:55,596 - INFO - Starting SUMO...
+2025-07-10 16:37:55,597 - INFO - Config applied
+2025-07-10 16:37:55,597 - ERROR - Error starting SUMO: Connection 'default' is already active.
+2025-07-10 16:39:46,598 - INFO - Application closed
+2025-07-10 17:00:44,688 - INFO - Starting application
+2025-07-10 17:00:44,796 - INFO - Initializing configuration plugin
+2025-07-10 17:00:44,987 - INFO - Starting GUI main loop
+2025-07-10 17:01:37,982 - INFO - Applying config
+2025-07-10 17:01:39,201 - INFO - Starting SUMO...
+2025-07-10 17:01:39,201 - INFO - Config applied
+2025-07-10 17:01:43,695 - INFO - SUMO started with config: C:/Users/mario/Desktop/cosas/TFG_PROYECTO/configuracion_pruebas_tfg.sumocfg
+2025-07-10 17:01:43,695 - INFO - Connecting to TraCI...
+2025-07-10 17:01:43,696 - INFO - CS initialized in 0.001s
+2025-07-10 17:01:43,697 - INFO - Simulation running with C optimized module.
+2025-07-10 17:01:43,708 - INFO - Initializing recorder...
+2025-07-10 17:01:43,735 - INFO - SimulationRecorder initialized. Output file: C:/Users/mario/Desktop/cosas/TFG_PROYECTO/prueba_10_07_2025_2.mp4
+2025-07-10 17:01:43,735 - INFO - Recorder initialized with output file: C:/Users/mario/Desktop/cosas/TFG_PROYECTO/prueba_10_07_2025_2.mp4
+2025-07-10 17:01:43,782 - ERROR - Error capturing frame: name 'time' is not defined
+2025-07-10 17:01:44,024 - INFO - Rendimiento: 0.00ms/actualización (max: 0.00ms)
+2025-07-10 17:01:44,105 - ERROR - Error capturing frame: name 'time' is not defined
+2025-07-10 17:01:44,343 - INFO - Rendimiento: 0.00ms/actualización (max: 0.00ms)
+2025-07-10 17:01:44,445 - ERROR - Error capturing frame: name 'time' is not defined
+2025-07-10 17:01:44,663 - INFO - Rendimiento: 0.00ms/actualización (max: 0.00ms)
+2025-07-10 17:01:44,778 - ERROR - Error capturing frame: name 'time' is not defined
+2025-07-10 17:01:44,993 - INFO - Rendimiento: 0.00ms/actualización (max: 0.00ms)
+2025-07-10 17:01:45,145 - ERROR - Error capturing frame: name 'time' is not defined
+2025-07-10 17:01:45,373 - INFO - Rendimiento: 0.00ms/actualización (max: 0.00ms)
+2025-07-10 17:01:45,541 - ERROR - Error capturing frame: name 'time' is not defined
+2025-07-10 17:01:45,774 - INFO - Rendimiento: 0.00ms/actualización (max: 0.00ms)
+2025-07-10 17:01:45,953 - ERROR - Error capturing frame: name 'time' is not defined
+2025-07-10 17:01:46,171 - INFO - Rendimiento: 0.00ms/actualización (max: 0.00ms)
+2025-07-10 17:01:46,370 - ERROR - Error capturing frame: name 'time' is not defined
+2025-07-10 17:01:46,599 - INFO - Rendimiento: 0.00ms/actualización (max: 0.00ms)
+2025-07-10 17:01:46,805 - ERROR - Error capturing frame: name 'time' is not defined
+2025-07-10 17:01:47,031 - INFO - Rendimiento: 0.00ms/actualización (max: 0.00ms)
+2025-07-10 17:01:47,217 - ERROR - Error capturing frame: name 'time' is not defined
+2025-07-10 17:01:47,439 - INFO - Rendimiento: 0.00ms/actualización (max: 0.00ms)
+2025-07-10 17:01:47,440 - INFO - Simulation finished after 100 steps
+2025-07-10 17:01:47,454 - INFO - Exported pollution grid to pollution_grid_100.vtk
+2025-07-10 17:02:01,035 - INFO - Application closed
+2025-07-11 19:49:47,289 - INFO - 127.0.0.1 - - [11/Jul/2025 19:49:47] "GET /stats HTTP/1.1" 200 -
+2025-07-11 19:49:48,967 - INFO - Starting SUMO...
+2025-07-11 19:49:48,968 - INFO - 127.0.0.1 - - [11/Jul/2025 19:49:48] "POST /run_simulation HTTP/1.1" 200 -
+2025-07-11 19:49:52,085 - INFO - 127.0.0.1 - - [11/Jul/2025 19:49:52] "GET /results HTTP/1.1" 200 -
+2025-07-11 19:49:52,094 - INFO - 127.0.0.1 - - [11/Jul/2025 19:49:52] "[35m[1mGET /analysis HTTP/1.1[0m" 500 -
+2025-07-11 19:49:52,291 - INFO - 127.0.0.1 - - [11/Jul/2025 19:49:52] "GET /stats HTTP/1.1" 200 -
+2025-07-11 19:49:53,976 - INFO - 127.0.0.1 - - [11/Jul/2025 19:49:53] "GET /results HTTP/1.1" 200 -
+2025-07-11 19:49:53,977 - INFO - 127.0.0.1 - - [11/Jul/2025 19:49:53] "GET /history HTTP/1.1" 200 -
+2025-07-11 19:49:53,985 - INFO - 127.0.0.1 - - [11/Jul/2025 19:49:53] "[35m[1mGET /analysis HTTP/1.1[0m" 500 -
+2025-07-11 19:49:54,181 - INFO - 127.0.0.1 - - [11/Jul/2025 19:49:54] "GET /stats HTTP/1.1" 200 -
+2025-07-11 19:49:57,292 - INFO - 127.0.0.1 - - [11/Jul/2025 19:49:57] "GET /stats HTTP/1.1" 200 -
+2025-07-11 19:50:02,080 - INFO - 127.0.0.1 - - [11/Jul/2025 19:50:02] "GET /results HTTP/1.1" 200 -
+2025-07-11 19:50:02,081 - INFO - 127.0.0.1 - - [11/Jul/2025 19:50:02] "GET /history HTTP/1.1" 200 -
+2025-07-11 19:50:02,283 - INFO - 127.0.0.1 - - [11/Jul/2025 19:50:02] "GET /stats HTTP/1.1" 200 -
+2025-07-11 19:50:07,280 - INFO - 127.0.0.1 - - [11/Jul/2025 19:50:07] "GET /stats HTTP/1.1" 200 -
+2025-07-11 19:50:12,077 - INFO - 127.0.0.1 - - [11/Jul/2025 19:50:12] "GET /results HTTP/1.1" 200 -
+2025-07-11 19:50:12,287 - INFO - 127.0.0.1 - - [11/Jul/2025 19:50:12] "GET /stats HTTP/1.1" 200 -
+2025-07-11 19:50:17,291 - INFO - 127.0.0.1 - - [11/Jul/2025 19:50:17] "GET /stats HTTP/1.1" 200 -
+2025-07-11 19:50:22,082 - INFO - 127.0.0.1 - - [11/Jul/2025 19:50:22] "GET /results HTTP/1.1" 200 -
+2025-07-11 19:50:22,085 - INFO - 127.0.0.1 - - [11/Jul/2025 19:50:22] "GET /history HTTP/1.1" 200 -
+2025-07-11 19:50:22,095 - INFO - 127.0.0.1 - - [11/Jul/2025 19:50:22] "[35m[1mGET /analysis HTTP/1.1[0m" 500 -
+2025-07-11 19:50:22,288 - INFO - 127.0.0.1 - - [11/Jul/2025 19:50:22] "GET /stats HTTP/1.1" 200 -
+2025-07-11 19:50:27,290 - INFO - 127.0.0.1 - - [11/Jul/2025 19:50:27] "GET /stats HTTP/1.1" 200 -
+2025-07-11 19:50:32,085 - INFO - 127.0.0.1 - - [11/Jul/2025 19:50:32] "GET /results HTTP/1.1" 200 -
+2025-07-11 19:50:32,291 - INFO - 127.0.0.1 - - [11/Jul/2025 19:50:32] "GET /stats HTTP/1.1" 200 -
+2025-07-11 19:50:37,284 - INFO - 127.0.0.1 - - [11/Jul/2025 19:50:37] "GET /stats HTTP/1.1" 200 -
+2025-07-11 19:50:42,080 - INFO - 127.0.0.1 - - [11/Jul/2025 19:50:42] "GET /results HTTP/1.1" 200 -
+2025-07-11 19:50:42,083 - INFO - 127.0.0.1 - - [11/Jul/2025 19:50:42] "GET /history HTTP/1.1" 200 -
+2025-07-11 19:50:42,286 - INFO - 127.0.0.1 - - [11/Jul/2025 19:50:42] "GET /stats HTTP/1.1" 200 -
+2025-07-11 19:50:47,288 - INFO - 127.0.0.1 - - [11/Jul/2025 19:50:47] "GET /stats HTTP/1.1" 200 -
+2025-07-11 19:50:52,087 - INFO - 127.0.0.1 - - [11/Jul/2025 19:50:52] "GET /results HTTP/1.1" 200 -
+2025-07-11 19:50:52,095 - INFO - 127.0.0.1 - - [11/Jul/2025 19:50:52] "[35m[1mGET /analysis HTTP/1.1[0m" 500 -
+2025-07-11 19:50:52,294 - INFO - 127.0.0.1 - - [11/Jul/2025 19:50:52] "GET /stats HTTP/1.1" 200 -
+2025-07-11 19:50:57,293 - INFO - 127.0.0.1 - - [11/Jul/2025 19:50:57] "GET /stats HTTP/1.1" 200 -
+2025-07-11 19:51:02,082 - INFO - 127.0.0.1 - - [11/Jul/2025 19:51:02] "GET /results HTTP/1.1" 200 -
+2025-07-11 19:51:02,084 - INFO - 127.0.0.1 - - [11/Jul/2025 19:51:02] "GET /history HTTP/1.1" 200 -
+2025-07-11 19:51:02,288 - INFO - 127.0.0.1 - - [11/Jul/2025 19:51:02] "GET /stats HTTP/1.1" 200 -
+2025-07-11 19:51:07,284 - INFO - 127.0.0.1 - - [11/Jul/2025 19:51:07] "GET /stats HTTP/1.1" 200 -
+2025-07-11 19:51:12,083 - INFO - 127.0.0.1 - - [11/Jul/2025 19:51:12] "GET /results HTTP/1.1" 200 -
+2025-07-11 19:51:12,290 - INFO - 127.0.0.1 - - [11/Jul/2025 19:51:12] "GET /stats HTTP/1.1" 200 -
+2025-07-11 19:51:17,291 - INFO - 127.0.0.1 - - [11/Jul/2025 19:51:17] "GET /stats HTTP/1.1" 200 -
+2025-07-11 19:51:22,086 - INFO - 127.0.0.1 - - [11/Jul/2025 19:51:22] "GET /results HTTP/1.1" 200 -
+2025-07-11 19:51:22,089 - INFO - 127.0.0.1 - - [11/Jul/2025 19:51:22] "GET /history HTTP/1.1" 200 -
+2025-07-11 19:51:22,098 - INFO - 127.0.0.1 - - [11/Jul/2025 19:51:22] "[35m[1mGET /analysis HTTP/1.1[0m" 500 -
+2025-07-11 19:51:22,291 - INFO - 127.0.0.1 - - [11/Jul/2025 19:51:22] "GET /stats HTTP/1.1" 200 -
+2025-07-11 19:51:27,287 - INFO - 127.0.0.1 - - [11/Jul/2025 19:51:27] "GET /stats HTTP/1.1" 200 -
+2025-07-11 19:51:32,088 - INFO - 127.0.0.1 - - [11/Jul/2025 19:51:32] "GET /results HTTP/1.1" 200 -
+2025-07-11 19:51:32,294 - INFO - 127.0.0.1 - - [11/Jul/2025 19:51:32] "GET /stats HTTP/1.1" 200 -
+2025-07-11 19:51:37,287 - INFO - 127.0.0.1 - - [11/Jul/2025 19:51:37] "GET /stats HTTP/1.1" 200 -
+2025-07-11 19:51:42,079 - INFO - 127.0.0.1 - - [11/Jul/2025 19:51:42] "GET /results HTTP/1.1" 200 -
+2025-07-11 19:51:42,083 - INFO - 127.0.0.1 - - [11/Jul/2025 19:51:42] "GET /history HTTP/1.1" 200 -
+2025-07-11 19:51:42,285 - INFO - 127.0.0.1 - - [11/Jul/2025 19:51:42] "GET /stats HTTP/1.1" 200 -
+2025-07-11 19:51:47,288 - INFO - 127.0.0.1 - - [11/Jul/2025 19:51:47] "GET /stats HTTP/1.1" 200 -
+2025-07-11 19:51:52,089 - INFO - 127.0.0.1 - - [11/Jul/2025 19:51:52] "GET /results HTTP/1.1" 200 -
+2025-07-11 19:51:52,098 - INFO - 127.0.0.1 - - [11/Jul/2025 19:51:52] "[35m[1mGET /analysis HTTP/1.1[0m" 500 -
+2025-07-11 19:51:52,294 - INFO - 127.0.0.1 - - [11/Jul/2025 19:51:52] "GET /stats HTTP/1.1" 200 -
+2025-07-11 19:51:57,289 - INFO - 127.0.0.1 - - [11/Jul/2025 19:51:57] "GET /stats HTTP/1.1" 200 -
+2025-07-11 19:52:02,715 - INFO - 127.0.0.1 - - [11/Jul/2025 19:52:02] "GET /results HTTP/1.1" 200 -
+2025-07-11 19:52:02,718 - INFO - 127.0.0.1 - - [11/Jul/2025 19:52:02] "GET /history HTTP/1.1" 200 -
+2025-07-11 19:52:02,925 - INFO - 127.0.0.1 - - [11/Jul/2025 19:52:02] "GET /stats HTTP/1.1" 200 -
+2025-07-11 19:52:07,919 - INFO - 127.0.0.1 - - [11/Jul/2025 19:52:07] "GET /stats HTTP/1.1" 200 -
+2025-07-11 19:52:12,707 - INFO - 127.0.0.1 - - [11/Jul/2025 19:52:12] "GET /results HTTP/1.1" 200 -
+2025-07-11 19:52:12,910 - INFO - 127.0.0.1 - - [11/Jul/2025 19:52:12] "GET /stats HTTP/1.1" 200 -
+2025-07-11 19:52:17,917 - INFO - 127.0.0.1 - - [11/Jul/2025 19:52:17] "GET /stats HTTP/1.1" 200 -
+2025-07-11 19:52:22,717 - INFO - 127.0.0.1 - - [11/Jul/2025 19:52:22] "GET /results HTTP/1.1" 200 -
+2025-07-11 19:52:22,719 - INFO - 127.0.0.1 - - [11/Jul/2025 19:52:22] "GET /history HTTP/1.1" 200 -
+2025-07-11 19:52:22,726 - INFO - 127.0.0.1 - - [11/Jul/2025 19:52:22] "[35m[1mGET /analysis HTTP/1.1[0m" 500 -
+2025-07-11 19:52:22,922 - INFO - 127.0.0.1 - - [11/Jul/2025 19:52:22] "GET /stats HTTP/1.1" 200 -
+2025-07-11 19:52:27,918 - INFO - 127.0.0.1 - - [11/Jul/2025 19:52:27] "GET /stats HTTP/1.1" 200 -
+2025-07-11 19:52:32,704 - INFO - 127.0.0.1 - - [11/Jul/2025 19:52:32] "GET /results HTTP/1.1" 200 -
+2025-07-11 19:52:32,910 - INFO - 127.0.0.1 - - [11/Jul/2025 19:52:32] "GET /stats HTTP/1.1" 200 -
+2025-07-11 19:52:37,914 - INFO - 127.0.0.1 - - [11/Jul/2025 19:52:37] "GET /stats HTTP/1.1" 200 -
+2025-07-11 19:52:42,704 - INFO - 127.0.0.1 - - [11/Jul/2025 19:52:42] "GET /results HTTP/1.1" 200 -
+2025-07-11 19:52:42,706 - INFO - 127.0.0.1 - - [11/Jul/2025 19:52:42] "GET /history HTTP/1.1" 200 -
+2025-07-11 19:52:42,911 - INFO - 127.0.0.1 - - [11/Jul/2025 19:52:42] "GET /stats HTTP/1.1" 200 -
+2025-07-11 19:52:47,905 - INFO - 127.0.0.1 - - [11/Jul/2025 19:52:47] "GET /stats HTTP/1.1" 200 -
+2025-07-11 19:52:52,707 - INFO - 127.0.0.1 - - [11/Jul/2025 19:52:52] "GET /results HTTP/1.1" 200 -
+2025-07-11 19:52:52,716 - INFO - 127.0.0.1 - - [11/Jul/2025 19:52:52] "[35m[1mGET /analysis HTTP/1.1[0m" 500 -
+2025-07-11 19:52:52,912 - INFO - 127.0.0.1 - - [11/Jul/2025 19:52:52] "GET /stats HTTP/1.1" 200 -
+2025-07-11 19:52:57,918 - INFO - 127.0.0.1 - - [11/Jul/2025 19:52:57] "GET /stats HTTP/1.1" 200 -
+2025-07-11 19:53:00,658 - ERROR - Error starting SUMO: Could not connect in 59 tries
+2025-07-11 19:53:53,705 - INFO - 127.0.0.1 - - [11/Jul/2025 19:53:53] "GET /results HTTP/1.1" 200 -
+2025-07-11 19:53:53,708 - INFO - 127.0.0.1 - - [11/Jul/2025 19:53:53] "GET /history HTTP/1.1" 200 -
+2025-07-11 19:53:53,715 - INFO - 127.0.0.1 - - [11/Jul/2025 19:53:53] "[35m[1mGET /analysis HTTP/1.1[0m" 500 -
+2025-07-11 19:53:53,911 - INFO - 127.0.0.1 - - [11/Jul/2025 19:53:53] "GET /stats HTTP/1.1" 200 -
+2025-07-11 19:54:30,793 - INFO -  * Detected change in 'c:\\Users\\mario\\Documents\\GitHub\\contamination_simulation\\src\\main.py', reloading
